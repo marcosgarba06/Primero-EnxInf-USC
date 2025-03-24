@@ -1,0 +1,1 @@
+Aquí estan los apuntes que he usado/hecho y me han sido utiles a mi para el curso. Como es lógico, no son los apuntes más fiables, pero a mi me han ayudado bastante. Yo personalmente no estudiaria por lo que hay aquí pero igual hay algo que te sirve de ayuda. 
