@@ -55,17 +55,28 @@ int main(int argc, char const *argv[])
 
 int darAlta(TLISTA *listaUsu) {
     DatUsuario nuevoUsuario;
-    char password[MAX];
-    int valido = 1;
-    
+    TPOSICION posicion;
+    char contrasena[MAX];  
+    int cifrado;  
    
     printf("Introduzca el correo electrónico: ");
     scanf("%s", nuevoUsuario.correo);
     getchar(); 
     //Con el getchar limpiamos la cadena de entrada para evitar fallos
     
-    //FALTA COMPROBAR SI HAY OTRO CORREO IGUAL 
-    
+    //Comprobar correo
+    posicion = primeroLista(*listaUsu);
+
+    while (posicion != finLista(*listaUsu)) {
+
+        DatUsuario usuarioComparar;
+        recuperarElementoLista(*listaUsu, posicion, &usuarioComparar);
+
+        if (strcmp(usuarioComparar.correo, nuevoUsuario.correo) == 0) {
+            printf("Error: El correo electronico ya esta asociado a otra cuenta.\n");
+            return 1;
+        }
+
     printf("Introduazca el nombre: ");
     scanf("%s", nuevoUsuario.nombre);
     getchar();
@@ -80,15 +91,21 @@ int darAlta(TLISTA *listaUsu) {
     
     if (nuevoUsuario.edad < 18) {
         printf("Error: Para crear una cuenta de usuario hay que ser mayor de edad.\n");
-        return 0;
+        return 1;
     }
     
     printf("Introduzca la contraseña: ");
-    scanf("%s", password);
+    scanf("%s", contrasena);
     getchar();
+
+    printf("Introduzca el cifrado para la clave: ");
+    scanf("%d", &cifrado);
+
+    cadena2clave(&(nuevoUsuario.clave1), contrasena, cifrado);
     
-    CLAVE_CREAR(&nuevoUsuario.clave1);
-    CLAVE_ASIGNAR(&nuevoUsuario.clave1, password);
+    posicion = finLista(*listaUsu);
     
-   //Falta insertar el elemento en la lista
+
+    printf("Usuario registrado exitosamente.\n");
+}
 }
