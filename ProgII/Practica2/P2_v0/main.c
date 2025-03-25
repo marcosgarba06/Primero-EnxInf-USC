@@ -102,10 +102,7 @@ int darAlta(TLISTA *listaUsu) {
     scanf("%d", &cifrado);
 
     cadena2clave(&(nuevoUsuario.clave1), contrasena, cifrado);
-    
-    posicion = finLista(*listaUsu);
-    
 
     printf("Usuario registrado exitosamente.\n");
 }
-}
+
