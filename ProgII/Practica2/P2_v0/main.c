@@ -14,15 +14,19 @@
 typedef struct{
     char correo[MAX_EMAIL];
     char nombre[MAX_NAME];
-    char apelldos[MAX_APE];
+    char apellidos[MAX_APE];
     int edad;
     clave clave1;
 }DatUsuario;
 
+//Funciones definidas fuera de main
+int darDeAlta(TLISTA *listaUsu);
 
 int main(int argc, char const *argv[])
 {
-    TLISTA listaUsuarios;
+    TLISTA listaUsu;
+    crearLista(&listaUsu);
+
     char opcion;
 
     do
@@ -34,11 +38,12 @@ int main(int argc, char const *argv[])
         printf("\nd) Ver el numero de solicitudes para el evento.");
         printf("\ne) Venta de entradas.");
         printf("\ns) Salir del programa.");
+        scanf(" %c", &opcion);
         
         switch(opcion)
         {
         case 'a':
-            darAlta(&listaUsuarios);
+            darDeAlta(&listaUsu);
             break;
 
         case 's':
@@ -46,6 +51,7 @@ int main(int argc, char const *argv[])
             break;
     
         default:
+            printf("Opcion no valida.\n");
             break;
         }
     } while (opcion!='s');
@@ -53,56 +59,72 @@ int main(int argc, char const *argv[])
     return 0;
 }
 
-int darAlta(TLISTA *listaUsu) {
-    DatUsuario nuevoUsuario;
-    TPOSICION posicion;
-    char contrasena[MAX];  
-    int cifrado;  
-   
+int darDeAlta(TLISTA *listaUsu) {
+
+    DatUsuario nuevoUsu;
+    char contrasena[MAX];
+
     printf("Introduzca el correo electrónico: ");
-    scanf("%s", nuevoUsuario.correo);
+    scanf("%s", nuevoUsu.correo);
     getchar(); 
     //Con el getchar limpiamos la cadena de entrada para evitar fallos
     
-    //Comprobar correo
-    posicion = primeroLista(*listaUsu);
-
-    while (posicion != finLista(*listaUsu)) {
-
-        DatUsuario usuarioComparar;
-        recuperarElementoLista(*listaUsu, posicion, &usuarioComparar);
-
-        if (strcmp(usuarioComparar.correo, nuevoUsuario.correo) == 0) {
-            printf("Error: El correo electronico ya esta asociado a otra cuenta.\n");
-            return 1;
+    //Comprobar existencia del email
+    TPOSICION posicion;
+    DatUsuario usuario;
+    posicion=primeroLista(*listaUsu);
+    /*Para hacerlo se comprobará cada email con los emails que hayan en la lista
+    y, si coincide, se detiene el programa dando un mensaje de error.*/
+    while(posicion!=finLista(*listaUsu)){
+        recuperarElementoLista(*listaUsu, posicion,(TIPOELEMENTOLISTA*)&usuario);
+        /*Recupera el elemento almacenado en la lista en la posición dada, para ello 
+        reconvierte la estructura definida al tipo de dato que usa la lista en su 
+        definición (TIPOELEMENTOLISTA)*/
+        if(strcmp(usuario.correo,nuevoUsu.correo)==0){ 
+            //Se comparan ambas cadenas con strcmp para ver si son iguales
+            printf("Error: El email ya está asociado a otro usuario. \n");
+            return 0; //Devuelve 0 si hay error.
         }
-
-    printf("Introduazca el nombre: ");
-    scanf("%s", nuevoUsuario.nombre);
+        posicion=siguienteLista(*listaUsu,posicion);
+    }  
+    
+    printf("Introduzca su nombre:");
+    scanf("%s", nuevoUsu.nombre);
     getchar();
-    
-    printf("Introduzca los Apellidos: ");
-    scanf(" %[^\n]", nuevoUsuario.apelldos);
-    getchar(); 
-    
-    printf("Edad: ");
-    scanf("%d", &nuevoUsuario.edad);
-    getchar(); 
-    
-    if (nuevoUsuario.edad < 18) {
-        printf("Error: Para crear una cuenta de usuario hay que ser mayor de edad.\n");
-        return 1;
+
+    printf("Introduzca sus apellidos: ");
+    fgets(nuevoUsu.apellidos, MAX_APE, stdin);
+    nuevoUsu.apellidos[strlen(nuevoUsu.apellidos)-1]='\0'; 
+    //Elimina el caracter de salto \n que guarda fgets
+
+    printf("Itroduzca su edad: ");
+    scanf("%d", &nuevoUsu.edad);
+
+    if (nuevoUsu.edad<18){
+        printf("Error: Para crear un usuario hay que ser mayor de esdad. \n");
+        return 0;
     }
     
     printf("Introduzca la contraseña: ");
     scanf("%s", contrasena);
     getchar();
-
-    printf("Introduzca el cifrado para la clave: ");
+    
+    int cifrado;
+    printf("Introduzca el número utilizado para cifrar la contraseña: ");
     scanf("%d", &cifrado);
 
-    cadena2clave(&(nuevoUsuario.clave1), contrasena, cifrado);
+    //Cifrar contraseña;
+    cadena2clave(nuevoUsu.clave1, contrasena, cifrado);
 
-    printf("Usuario registrado exitosamente.\n");
+    insertarElementoLista(listaUsu, finLista(*listaUsu), &nuevoUsu);
+
+    printf("\nUsuario dado de alta con éxito con los siguientes elementos: \n");
+    printf("CORREO ELECTRONICO: %s:", nuevoUsu.correo);
+    printf("\n Nombre: %s", nuevoUsu.nombre);
+    printf("\n Apellidos: %s", nuevoUsu.apellidos);
+    printf("\nContraseña: ");
+    imprimir(nuevoUsu.clave1, 1); //Se usa el modo 1 para imprimir *
+    
+    return 1;
 }
 
