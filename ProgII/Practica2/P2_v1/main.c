@@ -10,6 +10,7 @@
 #define MAX_NAME 25
 #define MAX_APE 50
 #define MAX_EMAIL 255
+#define MAX_PASS 255
 
 typedef struct{
     char correo[MAX_EMAIL];
@@ -21,6 +22,7 @@ typedef struct{
 
 //Funciones definidas fuera de main
 int darDeAlta(TLISTA *listaUsu);
+int darDeBaja(TLISTA *listaUsu);
 
 int main(int argc, char const *argv[])
 {
@@ -109,9 +111,7 @@ int darDeAlta(TLISTA *listaUsu) {
     scanf("%s", contrasena);
     getchar();
     
-    int cifrado;
-    printf("Introduzca el número utilizado para cifrar la contraseña: ");
-    scanf("%d", &cifrado);
+    int cifrado = 7;
 
     //Cifrar contraseña;
     cadena2clave(nuevoUsu.clave1, contrasena, cifrado);
@@ -126,5 +126,88 @@ int darDeAlta(TLISTA *listaUsu) {
     imprimir(nuevoUsu.clave1, 1); //Se usa el modo 1 para imprimir *
     
     return 1;
+}
+
+/*
+SOLUVON A WARNING???    
+void insertarUsuario(TLISTA *listaUsu, TPOSICION pos, DatUsuario *usuario) {
+    TIPOELEMENTOLISTA elemento = convertirDatUsuarioATIPOELEMENTOLISTA(usuario);
+    insertarElementoLista(listaUsu, pos, elemento);
+}
+
+TIPOELEMENTOLISTA convertirDatUsuarioATIPOELEMENTOLISTA(DatUsuario *usuario) {
+    return (TIPOELEMENTOLISTA)usuario;
+}*/
+
+int darDeBaja(TLISTA *listaUsu){
+    DatUsuario usuario;
+    char email[MAX_EMAIL];
+
+    printf("Introduzca el correo electonico del usuario a eliminar: ");
+    scanf("%s", email);
+    getchar();
+
+    TPOSICION pos;
+    pos = primeroLista(*listaUsu);
+    int elementoEncontrado;
+
+    while (finLista(*listaUsu) != pos){
+        recuperarElementoLista(*listaUsu, pos, (TIPOELEMENTOLISTA*)&usuario);
+        if(strcmp(usuario.correo, email)==0){
+        elementoEncontrado = 1;
+        break; 
+        /*se detiene si lo encuentra y queda guardado en la variable usuario el 
+        usuario que tiene ese correo*/
+        }
+    }
+
+    if(elementoEncontrado==0){ //Si no lo encuentra da error
+        printf("Error: El correo electronico no se encuentra entre los usuarios.");
+        return 0;
+    }
+
+    char contrasenha[MAX_PASS];
+    int cifrado = 7; //Se usa el mismo cifrado que en la fincion de introducir usuarios
+    
+    printf("Introdizca la contraseña para poder eliminar el Usuario con email %s: \n", email);
+    scanf("%s", contrasenha);
+    getchar();
+
+     /*Comprobar si las contraseñas son iguales, para esto se crea una clave a partir de la string
+    del usuario y se compara caracter a caracter con la existente para ese usuario*/
+    
+    clave clave;
+    cadena2clave(&clave, contrasenha, cifrado);
+
+    if(longitud(clave) != longitud(usuario.clave1)){
+        printf("Eror : Contraseña incorrecta.\n");
+        liberar(&clave); //se libera clave porque es incorrecta y no se va a usar otra vez
+        return 0;
+    }else{
+
+        int compararClaves;
+        compararClaves = 1;
+
+        for(int i=0;i<longitud(usuario.clave1);i++){ //Bucle for para comprobar las claves
+            if (recuperar(usuario.clave1, i) != recuperar(clave, i)){
+                /*Se itera caracter a caracter, si son diferentes entonces el proceso se detiene
+                si son iguales continua hasta el final*/
+                compararClaves = 0;
+                break;
+            }
+        }
+
+        if(compararClaves==0){
+            printf("Error: Clave incorrecta. \n");
+            liberar(&clave);
+            return 0;
+        }else{ //Si contraseñas son iguales entonces se elimina de la lista
+            suprimirElementoLista(listaUsu, pos); 
+            //suprime el elemento de esa posicion (la posicion guardada de antes)
+            printf("Usuario eliminado de la lista de usuarios. \n");    
+            liberar(&clave);
+            return 1;
+        }
+    }
 }
 
