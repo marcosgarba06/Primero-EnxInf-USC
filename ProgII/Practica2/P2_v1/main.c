@@ -24,6 +24,7 @@ typedef struct{
 int darDeAlta(TLISTA *listaUsu);
 int darDeBaja(TLISTA *listaUsu);
 void lecturaArchivoUsuarios(TLISTA *listaUsu, const char *archivo);
+void lecturaArchivoUsuarios(TLISTA *listaUsu, const char *archivo);
 
 int main(int argc, char const *argv[])
 {
@@ -70,7 +71,7 @@ void lecturaArchivoUsuarios(TLISTA *listaUsu, const char *archivo){
     
     DatUsuario usuario;
     FILE *archivoLista = fopen(archivo, "r");
-    //Abrir el archivo
+    //Abrir el arcusuario.nhivo
     if(archivoLista == NULL){ //Comprobar que se haya abierto con exito
         printf("Error al abrir el archivo. \n");
         return; //return temprano si hay error
@@ -89,6 +90,30 @@ void lecturaArchivoUsuarios(TLISTA *listaUsu, const char *archivo){
     representa en este orden: NOMBRE APELLIDOS EDAD EMAIL CONTRASEÑA*/
     
     fclose(archivoLista);  //Cierra el archivo de la lista.
+}
+
+void escribirArchivoUsuarios(TLISTA *listaUsu, const char *archivo){
+    
+    DatUsuario usuario;
+    FILE *archivoLista = fopen(archivo, "w");
+
+    if(archivoLista==NULL){
+        printf("Error alk abrir el archivo. \n");
+        return;
+    }
+     
+    TPOSICION pos;
+    pos = primeroLista(listaUsu);
+
+    while(pos!=finLista(listaUsu)){
+        char contrasena[MAX_PASS];
+        recuperarElementoLista(listaUsu, pos, (TIPOELEMENTOLISTA*)&usuario);
+        obtenerContrasena(usuario.clave1, contrasena);
+        fprintf(archivoLista, " %s %s %d %s %s", usuario.nombre, usuario.apellidos, 
+            usuario.edad, usuario.correo, contrasena);
+        pos = siguienteLista(listaUsu, pos);
+    }
+    fclose(archivoLista);
 }
 
 
