@@ -31,3 +31,6 @@ int compruebaclave(clave c, int modo2);
     2 modos diferentes:
         MODO 0: Pide la clave completa
         MODO 1: Oculta varios caracteres con * y pide al usuario el resto*/
+
+void obtenerContraseña(clave c, char *cad);
+/*para obtener la contraseña descifrada*/

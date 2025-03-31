@@ -23,12 +23,13 @@ typedef struct{
 //Funciones definidas fuera de main
 int darDeAlta(TLISTA *listaUsu);
 int darDeBaja(TLISTA *listaUsu);
+void lecturaArchivoUsuarios(TLISTA *listaUsu, const char *archivo);
 
 int main(int argc, char const *argv[])
 {
     TLISTA listaUsu;
     crearLista(&listaUsu);
-
+    lecturaArchivoUsuarios(&listaUsu, "listausuarios.txt");
     char opcion;
 
     do
@@ -67,19 +68,27 @@ int main(int argc, char const *argv[])
 
 void lecturaArchivoUsuarios(TLISTA *listaUsu, const char *archivo){
     
-    FILE *archivoLista = fopen("listausuarios.txt", "r");
+    DatUsuario usuario;
+    FILE *archivoLista = fopen(archivo, "r");
     //Abrir el archivo
     if(archivoLista == NULL){ //Comprobar que se haya abierto con exito
         printf("Error al abrir el archivo. \n");
         return; //return temprano si hay error
     }
     
+    char contrasena[MAX_PASS];
+    while(fscanf(archivoLista, "%s %s %d %s %s", usuario.nombre, usuario.apellidos, 
+        &usuario.edad, usuario.correo, contrasena)==5){ //Lee los datos del archivo
+            cadena2clave(&usuario.clave1, contrasena, 7);
+            //Crea clave para guardarla cifrada
+            insertarElementoLista(listaUsu, finLista(listaUsu), &usuario);
+            //Inserta cada elemento al final de la lista.
+        }
     /*Leer del archivo los usuarios, en el archivos los usuarios estan en 
     diferes columnas con una fila para cada usuario. En las columnas se
     representa en este orden: NOMBRE APELLIDOS EDAD EMAIL CONTRASEÑA*/
-
+    
     fclose(archivoLista);  //Cierra el archivo de la lista.
-
 }
 
 

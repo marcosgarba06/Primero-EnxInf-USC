@@ -216,3 +216,14 @@ int compruebaclave(clave c, int modo2){
         return 0;
     }
 }
+
+
+//ACTUALIZACION TAD CLAVE PARA OBTENER CONTRASEÑA DESCIRADA
+void obtenerContrasena(clave c, char *cad){
+    for(int i = 0;i<longitud(c);i++){
+        cad[i] = recuperar(c,i); 
+        /*Como recuperar obtiene cada caracter descifrado entonces
+        se crea la clave descifrada descifrando elemento a elemento
+        la clave existente*/ 
+    }
+} 
