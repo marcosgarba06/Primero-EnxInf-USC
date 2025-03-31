@@ -47,6 +47,10 @@ int main(int argc, char const *argv[])
         case 'a':
             darDeAlta(&listaUsu);
             break;
+        
+        case 'b': 
+            darDeBaja(&listaUsu);
+            break;
 
         case 's':
             printf("Saliendo del programa...\n");
@@ -60,6 +64,24 @@ int main(int argc, char const *argv[])
     
     return 0;
 }
+
+void lecturaArchivoUsuarios(TLISTA *listaUsu, const char *archivo){
+    
+    FILE *archivoLista = fopen("listausuarios.txt", "r");
+    //Abrir el archivo
+    if(archivoLista == NULL){ //Comprobar que se haya abierto con exito
+        printf("Error al abrir el archivo. \n");
+        return; //return temprano si hay error
+    }
+    
+    /*Leer del archivo los usuarios, en el archivos los usuarios estan en 
+    diferes columnas con una fila para cada usuario. En las columnas se
+    representa en este orden: NOMBRE APELLIDOS EDAD EMAIL CONTRASEÑA*/
+
+    fclose(archivoLista);  //Cierra el archivo de la lista.
+
+}
+
 
 int darDeAlta(TLISTA *listaUsu) {
 
