@@ -1,7 +1,6 @@
 #ifndef LISTA_H
 #define LISTA_H
 
-
 /** Definicion del tipo de elemento almacenado en la lista **/
 typedef int TIPOELEMENTOLISTA;
 
