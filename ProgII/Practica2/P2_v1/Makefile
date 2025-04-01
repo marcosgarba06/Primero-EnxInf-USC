@@ -16,10 +16,10 @@ INCLUDES = -I $(HEADER_FILES_DIR)
 OUTPUT = ejecutable
 
 #ficheros .h.  Si hay varios, se precede cada uno con $(HEADER_FILES_DIR)/
-HEADERS = $(HEADER_FILES_DIR)/clave.h $(HEADER_FILES_DIR)/lista-1.h  $(HEADER_FILES_DIR)/cola-1.h
+HEADERS = $(HEADER_FILES_DIR)/clave.h $(HEADER_FILES_DIR)/lista-1.h  $(HEADER_FILES_DIR)/cola-1.h $(HEADER_FILES_DIR)/compraventa.h
 
 #FUENTES: todos los archivos .c necesarios
-SRCS = main.c clave.c lista-1.c cola-1.c 
+SRCS = main.c clave.c lista-1.c cola-1.c compraventa.c
 
 #ficheros .o: todos los .o con un analogo .c en SRCS
 OBJS = $(SRCS:.c=.o)

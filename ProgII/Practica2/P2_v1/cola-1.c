@@ -3,7 +3,7 @@
 
 
 /** Definicion del tipo de elemento almacenado en la cola **/
-typedef  int TIPOELEMENTOCOLA;
+typedef int TIPOELEMENTOCOLA;
 
 
 /** Estructura  para cada nodo de la cola **/
