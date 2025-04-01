@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "structusuario.h"
+
 /** Definicion del tipo de elemento almacenado en la lista **/
 
 typedef int TIPOELEMENTOLISTA;

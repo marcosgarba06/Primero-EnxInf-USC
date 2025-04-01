@@ -6,7 +6,6 @@
 #include "clave.h"
 #include "cola-1.h"
 #include "lista-1.h"
-#include "structusuario.h"
 
 
 #define MAX 255
@@ -15,6 +14,13 @@
 #define MAX_EMAIL 255
 #define MAX_PASS 255
 
+typedef struct{
+    char correo[MAX_EMAIL];
+    char nombre[MAX_NAME];
+    char apellidos[MAX_APE];
+    int edad;
+    clave clave1;
+}DatUsuario;
 
 void lecturaArchivoUsuarios(TLISTA *listaUsu, const char *archivo);
 void escribirArchivoUsuarios(TLISTA *listaUsu, const char *archivo);
