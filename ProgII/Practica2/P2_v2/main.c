@@ -24,14 +24,13 @@ typedef struct{
 
 //Funciones definidas fuera del int main()
 int darDeAlta(TLISTA *listaUsu);
-void lecturaArchivoUsuarios(TLISTA *listaUsu, const char *archivo);
-void escribirArchivoUsuarios(TLISTA *listaUsu, const char *archivo);
+
 
 int main(int argc, char const *argv[])
 {
     TLISTA listaUsu;
     crearLista(&listaUsu);
-    lecturaArchivoUsuarios(&listaUsu, "listausuarios.txt");
+    //lecturaArchivoUsuarios(&listaUsu, "listausuarios.txt");
     char opcion;
 
     do
@@ -50,6 +49,9 @@ int main(int argc, char const *argv[])
         {
         case 'a':
             darDeAlta(&listaUsu);
+            int tam;
+            tam = longitudLista(listaUsu);
+            printf("Hay %d usuarios registrados. \n", tam);
             break;
         
         case 'b': 
@@ -57,7 +59,7 @@ int main(int argc, char const *argv[])
             break;
 
         case 's':
-            escribirArchivoUsuarios(&listaUsu, "listausuarios.txt");
+            //escribirArchivoUsuarios(&listaUsu, "listausuarios.txt");
             printf("Saliendo del programa...\n");
             break;
     
@@ -70,62 +72,12 @@ int main(int argc, char const *argv[])
     return 0;
 }
 
-void lecturaArchivoUsuarios(TLISTA *listaUsu, const char *archivo){
-
-    DatUsuario usuario;
-    FILE *archivoLista = fopen(archivo, "r");
-    // Abrir el arcusuario.nhivo
-    if (archivoLista == NULL)
-    { // Comprobar que se haya abierto con exito
-        printf("Error al abrir el archivo. \n");
-        return; // return temprano si hay error
-    }
-
-    char contrasena[MAX_PASS];
-    while (fscanf(archivoLista, "%s %s %d %s %s", usuario.nombre, usuario.apellidos,
-                  &usuario.edad, usuario.correo, contrasena) == 5)
-    { // Lee los datos del archivo
-        cadena2clave(&usuario.clave1, contrasena, 7);
-        // Crea clave para guardarla cifrada
-        insertarElementoLista(listaUsu, finLista(listaUsu), &usuario);
-        // Inserta cada elemento al final de la lista.
-    }
-    /*Leer del archivo los usuarios, en el archivos los usuarios estan en
-    diferes columnas con una fila para cada usuario. En las columnas se
-    representa en este orden: NOMBRE APELLIDOS EDAD EMAIL CONTRASEÑA*/
-
-    fclose(archivoLista); // Cierra el archivo de la lista.
-}
-
-void escribirArchivoUsuarios(TLISTA *listaUsu, const char *archivo){
-
-    DatUsuario usuario;
-    FILE *archivoLista = fopen(archivo, "w");
-
-    if (archivoLista == NULL)
-    {
-        printf("Error alk abrir el archivo. \n");
-        return;
-    }
-
-    TPOSICION pos;
-    pos = primeroLista(listaUsu);
-
-    while (pos != finLista(listaUsu))
-    {
-        char contrasena[MAX_PASS];
-        recuperarElementoLista(listaUsu, pos, (TIPOELEMENTOLISTA *)&usuario);
-        obtenerContrasena(usuario.clave1, contrasena);
-        fprintf(archivoLista, " %s %s %d %s %s", usuario.nombre, usuario.apellidos,
-                usuario.edad, usuario.correo, contrasena);
-        pos = siguienteLista(listaUsu, pos);
-    }
-    fclose(archivoLista);
-}
 
 int darDeAlta(TLISTA *listaUsu){
+
     DatUsuario *nuevoUsu = (DatUsuario *)malloc(sizeof(DatUsuario));
-    if (nuevoUsu == NULL) {
+
+    if (nuevoUsu == NULL) { //Comprobar que el puntero se inicializa de forma correcta
         printf("Error: No se pudo asignar memoria para el nuevo usuario.\n");
         return 0;
     }
@@ -133,7 +85,7 @@ int darDeAlta(TLISTA *listaUsu){
 
     printf("Ingrese su nombre: ");
     scanf(" %s", nuevoUsu->nombre);
-    getc(stdin);
+    getc(stdin); //Elimina el caracter \n de salto de linea que queda en el buffer de entrada
 
     printf("Ingrese su apellido: ");
     fgets(nuevoUsu->apellidos, MAX_APE, stdin);
@@ -142,14 +94,17 @@ int darDeAlta(TLISTA *listaUsu){
     printf("Itroduzca su edad: ");
     scanf("%d", &nuevoUsu->edad);
 
-    if (nuevoUsu->edad<18){
+    if (nuevoUsu->edad<18){ //Comprobar que el nuevo usuario es mayor de edad
         printf("Error: Para crear un usuario hay que ser mayor de esdad. \n");
-        return 0;
+        return 1; //return temprano si el usuario es menor de edad
+    }else if(nuevoUsu->edad>150){ 
+        printf("Error: Deberias estar muerto. \n");
+        return 1;
     }
 
     printf("Introduzca el correo electrónico: ");
     scanf("%s", nuevoUsu->correo);
-    getchar(); 
+    getc(stdin); 
 
     TPOSICION posicion;
     DatUsuario usuario;
@@ -165,26 +120,36 @@ int darDeAlta(TLISTA *listaUsu){
         if(strcmp(usuario.correo,nuevoUsu->correo)==0){ 
             //Se comparan ambas cadenas con strcmp para ver si son iguales
             printf("Error: El email ya está asociado a otro usuario. \n");
+            free(nuevoUsu);
             return 0; //Devuelve 0 si hay error.
         }
         posicion=siguienteLista(*listaUsu,posicion);
     }
 
     char contrasena[MAX_PASS];
-    int cifrado = 7;
+    int cifrado;
     printf("Introduzca la contraseña: ");
     scanf("%s", contrasena);
-    getchar();
+    getc(stdin);
+
+    printf("Introduce el numero de cifrado para la contraseña: ");
+    scanf("%d", &cifrado);
 
     cadena2clave(&(nuevoUsu->clave1), contrasena, cifrado);
-    insertarElementoLista(listaUsu, finLista(*listaUsu), &nuevoUsu);
+    insertarElementoLista(listaUsu, finLista(*listaUsu), nuevoUsu);
 
     printf("\nUsuario dado de alta con éxito con los siguientes elementos: \n");
-    printf("\n CORREO ELECTRONICO: %s", nuevoUsu->correo);
+    printf("\n Correo electronico (email): %s", nuevoUsu->correo);
     printf("\n Nombre: %s", nuevoUsu->nombre);
     printf("\n Apellidos: %s", nuevoUsu->apellidos);
     printf("\n Contraseña:");
     imprimir(nuevoUsu->clave1, 1); //Se usa el modo 1 para imprimir *
     
-    return 1;
+    free(nuevoUsu);
+    return 0;
+}
+
+int darDeBaja(TLISTA *listaUsu){
+    
+    return 0;
 }

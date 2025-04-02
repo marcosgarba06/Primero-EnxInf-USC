@@ -175,6 +175,7 @@ int darDeAlta(TLISTA *listaUsu)
         printf("Error: Para crear un usuario hay que ser mayor de esdad. \n");
         return 0;
     }
+    if(nuevoUsu.edad > 100)
 
     printf("Introduzca la contraseña: ");
     scanf("%s", contrasena);
