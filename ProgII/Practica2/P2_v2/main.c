@@ -110,17 +110,19 @@ int darDeAlta(TLISTA *listaUsu){
     getc(stdin); 
 
     TPOSICION posicion;
-    DatUsuario usuario;
+    DatUsuario *usuario;
 
     posicion=primeroLista(*listaUsu);
     /*Para hacerlo se comprobará cada email con los emails que hayan en la lista
     y, si coincide, se detiene el programa dando un mensaje de error.*/
     while(posicion!=finLista(*listaUsu)){
         recuperarElementoLista(*listaUsu, posicion,(TIPOELEMENTOLISTA *)&usuario);
+        printf("Email recuperado: '%s'\n", usuario->correo);
+
         /*Recupera el elemento almacenado en la lista en la posición dada, para ello 
         reconvierte la estructura definida al tipo de dato que usa la lista en su 
         definición (TIPOELEMENTOLISTA)*/
-        if(strcmp(usuario.correo,nuevoUsu->correo)==0){ 
+        if(strcmp(usuario->correo,nuevoUsu->correo)==0){ 
             //Se comparan ambas cadenas con strcmp para ver si son iguales
             printf("Error: El email ya está asociado a otro usuario. \n");
             free(nuevoUsu);
@@ -140,6 +142,7 @@ int darDeAlta(TLISTA *listaUsu){
 
     cadena2clave(&(nuevoUsu->clave1), contrasena, cifrado);
     insertarElementoLista(listaUsu, finLista(*listaUsu), nuevoUsu);
+    imprimirLista(*listaUsu);
 
     printf("\nUsuario dado de alta con éxito con los siguientes elementos: \n");
     printf("\n Correo electronico (email): %s", nuevoUsu->correo);
