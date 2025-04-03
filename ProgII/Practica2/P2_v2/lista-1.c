@@ -14,11 +14,11 @@ typedef struct{
     char apellidos[MAX_APE];
     int edad;
     clave clave1;
-}Usuario;
+} DatUsuario;
 
 /** Definicion del tipo de elemento almacenado en la lista **/
 
-typedef Usuario TIPOELEMENTOLISTA;
+typedef DatUsuario TIPOELEMENTOLISTA;
 
 /** Estructura para un nodo de la lista **/
 typedef struct nodoLista {

@@ -24,7 +24,8 @@ typedef struct{
 
 //Funciones definidas fuera del int main()
 int darDeAlta(TLISTA *listaUsu);
-
+//int darDeBaja(TLISTA *listaUsu);
+void imprimirLista(TLISTA listaUsu);
 
 int main(int argc, char const *argv[])
 {
@@ -32,7 +33,7 @@ int main(int argc, char const *argv[])
     crearLista(&listaUsu);
     //lecturaArchivoUsuarios(&listaUsu, "listausuarios.txt");
     char opcion;
-
+    int tam = 0;
     do
     {
         printf("========= Seleccione una opcion =========");
@@ -49,13 +50,15 @@ int main(int argc, char const *argv[])
         {
         case 'a':
             darDeAlta(&listaUsu);
-            int tam;
             tam = longitudLista(listaUsu);
             printf("Hay %d usuarios registrados. \n", tam);
             break;
         
         case 'b': 
+            void imprimirLista(TLISTA listaUsu);
             //darDeBaja(&listaUsu);
+            //tam = longitudLista(listaUsu);
+            //printf("Hay %d usuarios registrados. \n", tam);
             break;
 
         case 's':
@@ -113,7 +116,7 @@ int darDeAlta(TLISTA *listaUsu){
     /*Para hacerlo se comprobará cada email con los emails que hayan en la lista
     y, si coincide, se detiene el programa dando un mensaje de error.*/
     while(posicion!=finLista(*listaUsu)){
-        recuperarElementoLista(*listaUsu, posicion,(TIPOELEMENTOLISTA*)&usuario);
+        recuperarElementoLista(*listaUsu, posicion,(TIPOELEMENTOLISTA *)&usuario);
         /*Recupera el elemento almacenado en la lista en la posición dada, para ello 
         reconvierte la estructura definida al tipo de dato que usa la lista en su 
         definición (TIPOELEMENTOLISTA)*/
@@ -149,7 +152,83 @@ int darDeAlta(TLISTA *listaUsu){
     return 0;
 }
 
-int darDeBaja(TLISTA *listaUsu){
-    
-    return 0;
+
+//int darDeBaja(TLISTA *listaUsu) 
+/*Funcion para dar de baja a un usuario de la lista, para ello se le pide el correo electronico
+del usuario que se quiere eliminar, si este se encuentra en la lista entonces se le pide la contraseña,
+si la contraseña es correcta entonces se elimina el usuario de la lista*/
+/*{
+    DatUsuario usuario;
+    char email[MAX_EMAIL];
+
+    printf("Introduzca el correo electonico del usuario a eliminar: ");
+    scanf("%s", email);
+    getc(stdin);
+
+    email[strcspn(email, "\n")] = 0; //elimina el salto de linea si hay
+
+    TPOSICION pos;
+    pos = primeroLista(*listaUsu);
+    int elementoEncontrado;
+
+    while (finLista(*listaUsu) != pos)
+    {
+        recuperarElementoLista(*listaUsu, pos, (TIPOELEMENTOLISTA *)&usuario);
+        
+        // Añadir impresión para depuración
+        printf("Comparando: '%s' con '%s'\n", usuario.correo, email);
+
+        if (strcmp(usuario.correo, email) == 0)
+        {
+            elementoEncontrado = 1;
+            break;*/
+            /*se detiene si lo encuentra y queda guardado en la variable usuario el
+            usuario que tiene ese correo */
+        /*}
+        pos = siguienteLista(*listaUsu, pos);
+    }
+
+    if (elementoEncontrado == 0)
+    { // Si no lo encuentra da error
+        printf("Error: El correo electronico no se encuentra entre los usuarios.");
+        return 1;
+    }
+
+    printf("Introduzca la contraseña del usuario a eliminar: ");
+    scanf(" %s", email);
+    getc(stdin);
+
+    char contrasenaGuardada[MAX_PASS];
+    obtenerContrasena(usuario.clave1, contrasenaGuardada); //recupera la contraseña del usuario con ese mail
+    if (strcmp(contrasenaGuardada, email) != 0)
+    {
+        printf("Error: Contraseña incorrecta. \n");
+        return 1;
+    }else{
+        suprimirElementoLista(listaUsu, pos); //elimina el usuario de la lista
+        printf("Usuario eliminado con exito. \n");
+        return 0;
+    }
+}
+*/
+void imprimirLista(TLISTA listaUsu) {
+    TPOSICION pos = primeroLista(listaUsu);
+    DatUsuario usuario;
+
+    printf("Contenido de la lista de usuarios:\n");
+    while (pos != finLista(listaUsu)) {
+        recuperarElementoLista(listaUsu, pos, (TIPOELEMENTOLISTA *)&usuario);
+        
+        // Imprimir la información del usuario
+        printf("\nCorreo electrónico: %s", usuario.correo);
+        printf("\nNombre: %s", usuario.nombre);
+        printf("\nApellidos: %s", usuario.apellidos);
+        printf("\nEdad: %d", usuario.edad);
+        printf("\nContraseña: ");
+        imprimir(usuario.clave1, 1); // Imprimir con el modo de asteriscos
+        printf("\n---------------------------");
+
+        pos = siguienteLista(listaUsu, pos);
+    }
+    printf("\nFin de la lista de usuarios.\n");
 }
