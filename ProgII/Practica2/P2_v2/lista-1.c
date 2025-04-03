@@ -18,7 +18,7 @@ typedef struct{
 
 /** Definicion del tipo de elemento almacenado en la lista **/
 
-typedef DatUsuario TIPOELEMENTOLISTA;
+typedef DatUsuario *TIPOELEMENTOLISTA;
 
 /** Estructura para un nodo de la lista **/
 typedef struct nodoLista {
