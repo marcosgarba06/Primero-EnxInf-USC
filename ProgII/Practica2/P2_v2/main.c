@@ -141,7 +141,7 @@ int darDeAlta(TLISTA *listaUsu){
     scanf("%d", &cifrado);
 
     cadena2clave(&(nuevoUsu->clave1), contrasena, cifrado);
-    insertarElementoLista(listaUsu, finLista(*listaUsu), nuevoUsu);
+    insertarElementoLista(listaUsu, finLista(*listaUsu), (TIPOELEMENTOLISTA)(nuevoUsu));
     imprimirLista(*listaUsu);
 
     printf("\nUsuario dado de alta con éxito con los siguientes elementos: \n");
