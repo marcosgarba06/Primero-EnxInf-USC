@@ -16,7 +16,6 @@
 
 //Funciones definidas fuera del int main()
 int darDeAlta(TLISTA *listaUsu);
-//int darDeBaja(TLISTA *listaUsu);
 void imprimirLista(TLISTA listaUsu);
 
 int main(int argc, char const *argv[])
@@ -69,79 +68,49 @@ int main(int argc, char const *argv[])
 
 
 int darDeAlta(TLISTA *listaUsu){
+    TIPOELEMENTOLISTA nuevoUsu;
+    unsigned short cifrado;
+    char contrasenaTemp[MAX_PASS];
 
-    TIPOELEMENTOLISTA *nuevoUsu;
-    nuevoUsu = (TIPOELEMENTOLISTA*)malloc(sizeof(TIPOELEMENTOLISTA));
-    if (nuevoUsu == NULL)
-    {
-        printf("Error: No se ha podido reservar memoria.\n");
-        return -1;
-    }
-    
+    getchar();
     printf("Introduzca el nombre del usuario: ");
-    scanf("%s", nuevoUsu->nombre);
-    getc(stdin);
+    scanf("%s", nuevoUsu.nombre);
+    getchar();
 
     printf("Introduzca los apellidos del usuario: ");
-    fgets(nuevoUsu->apellidos, MAX_APE, stdin);
-    nuevoUsu->apellidos[strlen(nuevoUsu->apellidos)-1]='\0'; 
-
-    printf("Introduzca la edad del usuario: ");
-    scanf("%d", &nuevoUsu->edad);
-    getc(stdin);
-
-    if (nuevoUsu->edad < 18)
-    {
-        printf("Error: El usuario debe ser mayor de edad.\n");
-    }else if(nuevoUsu->edad > 150){
-        printf("Error: Con esa edad deberias estar muerto.\n");
-    }
+    scanf("%[^\n]", nuevoUsu.apellidos);
+    getchar();
 
     printf("Introduzca el email del usuario: ");
-    scanf("%s", nuevoUsu->correo);
-    getc(stdin);
+    scanf("%s", nuevoUsu.correo);
+    getchar();
 
-    TPOSICION posicion = primeroLista(*listaUsu);
-    TIPOELEMENTOLISTA *aux;
+    printf("Introduzca la edad del usuario: ");
+    scanf("%d", &nuevoUsu.edad);
 
-    while(posicion!=finLista(*listaUsu)){
-        recuperarElementoLista(*listaUsu,posicion,aux);
-        printf("Email recuperado: '%s'\n", aux->correo);
-
-        /*Recupera el elemento almacenado en la lista en la posición dada, para ello 
-        reconvierte la estructura definida al tipo de dato que usa la lista en su 
-        definición (TIPOELEMENTOLISTA)*/
-        if(strcmp(aux->correo,nuevoUsu->correo)==0){ 
-            //Se comparan ambas cadenas con strcmp para ver si son iguales
-            printf("Error: El email ya está asociado a otro usuario. \n");
-            free(nuevoUsu);
-            return -1; //Devuelve -1 si hay error.
-        }
-        posicion=siguienteLista(*listaUsu,posicion);
+    if (nuevoUsu.edad < 18){
+        printf("Error: El usuario debe ser mayor de edad.\n");
+        return -1;
     }
 
-    char contrasena[MAX_PASS];
-    int cifrado;
-    printf("Introduzca la contraseña: ");
-    scanf("%s", contrasena);
-    getc(stdin);
+    printf("Introduzca la contraseña del usuario: ");
+    scanf("%s", contrasenaTemp);
+    getchar();
+   
+    printf("Introduzca el cifrado del usuario: ");
+    scanf("%hu", &cifrado);
+    getchar();
 
-    printf("Introduce el numero de cifrado para la contraseña: ");
-    scanf("%d", &cifrado);
-    getc(stdin);
+    cadena2clave(nuevoUsu.clave1,contrasenaTemp, cifrado);
+    imprimir(nuevoUsu.clave1, 0);
 
-    cadena2clave(&(nuevoUsu->clave1), contrasena, cifrado);
-    insertarElementoLista(*listaUsu, finLista(*listaUsu), &nuevoUsu);
-    imprimirLista(*listaUsu);
-
-    printf("\nUsuario dado de alta con éxito con los siguientes elementos: \n");
-    printf("\n Correo electronico (email): %s", nuevoUsu->correo);
-    printf("\n Nombre: %s", nuevoUsu->nombre);
-    printf("\n Apellidos: %s", nuevoUsu->apellidos);
-    printf("\n Contraseña:");
-    imprimir(nuevoUsu->clave1, 1); //Se usa el modo 1 para imprimir *
+    insertarElementoLista(listaUsu, primeroLista(listaUsu), nuevoUsu);
     
-    free(nuevoUsu);
+    TIPOELEMENTOLISTA aux;
+    TPOSICION pos=primeroLista(listaUsu);
+
+    recuperarElementoLista(listaUsu, pos, &aux);
+    getchar();
     return 0;
 }
 
@@ -204,7 +173,7 @@ si la contraseña es correcta entonces se elimina el usuario de la lista*/
     }
 }
 */
-void imprimirLista(TLISTA listaUsu) {
+/*void imprimirLista(TLISTA listaUsu) {
     TPOSICION pos = primeroLista(listaUsu);
     DatUsuario usuario;
 
@@ -225,3 +194,4 @@ void imprimirLista(TLISTA listaUsu) {
     }
     printf("\nFin de la lista de usuarios.\n");
 }
+*/
