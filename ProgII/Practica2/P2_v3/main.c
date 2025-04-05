@@ -71,6 +71,7 @@ int darDeAlta(TLISTA *listaUsu){
     TIPOELEMENTOLISTA nuevoUsu;
     unsigned short cifrado;
     char contrasenaTemp[MAX_PASS];
+    clave clave1;
 
     getchar();
     printf("Introduzca el nombre del usuario: ");
@@ -93,23 +94,29 @@ int darDeAlta(TLISTA *listaUsu){
         return -1;
     }
 
-    printf("Introduzca la contraseña del usuario: ");
-    scanf("%s", contrasenaTemp);
-    getchar();
-   
-    printf("Introduzca el cifrado del usuario: ");
-    scanf("%hu", &cifrado);
-    getchar();
+    printf("Introduzca la clave: ");
+    while (getchar() != '\n');
+    fgets(contrasenaTemp, sizeof(contrasenaTemp), stdin);
 
-    cadena2clave(nuevoUsu.clave1,contrasenaTemp, cifrado);
-    imprimir(nuevoUsu.clave1, 0);
+    int len = strlen(contrasenaTemp);
+    if (len > 0 && contrasenaTemp[len-1] == '\n') {
+        contrasenaTemp[len-1] = '\0';
+    }
+
+    printf("Inroduzca el número para cifrar la clave: ");
+    scanf("%hu", &cifrado);
+
+    cadena2clave(&clave1, contrasenaTemp, cifrado);
+    printf("Clave creada con éxito.\n");
+    nuevoUsu.clave1 = clave1;
+    imprimir(nuevoUsu.clave1,0);
 
     insertarElementoLista(listaUsu, primeroLista(listaUsu), nuevoUsu);
     
     TIPOELEMENTOLISTA aux;
-    TPOSICION pos=primeroLista(listaUsu);
+    TPOSICION pos=finLista(listaUsu);
 
-    recuperarElementoLista(listaUsu, pos, &aux);
+    recuperarElementoLista(&listaUsu, pos, &aux);
     getchar();
     return 0;
 }
@@ -171,27 +178,5 @@ si la contraseña es correcta entonces se elimina el usuario de la lista*/
         printf("Usuario eliminado con exito. \n");
         return 0;
     }
-}
-*/
-/*void imprimirLista(TLISTA listaUsu) {
-    TPOSICION pos = primeroLista(listaUsu);
-    DatUsuario usuario;
-
-    printf("Contenido de la lista de usuarios:\n");
-    while (pos != finLista(listaUsu)) {
-        recuperarElementoLista(listaUsu, pos, (TIPOELEMENTOLISTA *)&usuario);
-        
-        // Imprimir la información del usuario
-        printf("\nCorreo electrónico: %s", usuario.correo);
-        printf("\nNombre: %s", usuario.nombre);
-        printf("\nApellidos: %s", usuario.apellidos);
-        printf("\nEdad: %d", usuario.edad);
-        printf("\nContraseña: ");
-        imprimir(usuario.clave1, 1); // Imprimir con el modo de asteriscos
-        printf("\n---------------------------");
-
-        pos = siguienteLista(listaUsu, pos);
-    }
-    printf("\nFin de la lista de usuarios.\n");
 }
 */
