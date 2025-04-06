@@ -187,6 +187,7 @@ int darDeAlta(TLISTA *listaUsu)
     cadena2clave(nuevoUsu.clave1, contrasena, cifrado);
 
     insertarElementoLista(listaUsu, finLista(*listaUsu), &nuevoUsu);
+    recuperarElementoLista(*listaUsu, finLista(*listaUsu), (TIPOELEMENTOLISTA *)&nuevoUsu);
 
     printf("\nUsuario dado de alta con éxito con los siguientes elementos: \n");
     printf("CORREO ELECTRONICO: %s:", nuevoUsu.correo);
