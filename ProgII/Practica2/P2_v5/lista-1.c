@@ -14,6 +14,7 @@ typedef struct{
     char apellidos[MAX_APE];
     int edad;
     clave clave1;
+    unsigned short cifrado;
 }DatUsuario;
 
 typedef DatUsuario TIPOELEMENTOLISTA;

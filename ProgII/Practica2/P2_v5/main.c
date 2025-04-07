@@ -5,24 +5,25 @@
 #include "cola-1.h"
 #include "clave.h"
 
-#define FILENAME "usuarios.txt"
 #define MAX_EMAIL 255
 #define MAX_PASS 255
 
 //Funciones del menú de opciones
 void darDeAlta(TLISTA *lista);
 void darDeBaja(TLISTA *lista);
-void recibirSolicitudes(TLISTA lista, TCOLA *cola);
-void consultarSolicitudes(TCOLA cola);
-void venderEntradas(TCOLA *cola);
-void finalizarPrograma(TLISTA *lista, TCOLA *cola);
+void solicitudesVenta(TLISTA lista, TCOLA *cola);
+void numeroSoli(TCOLA cola);
+void ventaEntradas(TCOLA *cola);
+void salir(TLISTA *lista, TCOLA *cola);
 
 //Funciones auxiliares para el funcionamiento del programa
-void cargarUsuarios(TLISTA *lista);
-void guardarUsuarios(TLISTA lista);
+
 int emailExiste(TLISTA lista, char *email);
-void codificarContrasena(char *contrasena, clave *clave1, unsigned short cifrado);
+void crearContrasena(char *contrasena, clave *clave1, unsigned short cifrado);
 int verificarContrasena(clave clave1, char *contrasena);
+void _strip_line(char *linea);
+void cargarUsuarios(TLISTA *lista, const char *nombreFichero);
+void guardarUsuarios(TLISTA lista, const char *nombreFichero);
 
 int main(int argc, char *argv[]) {
     /*if (argc != 3 || strcmp(argv[1], "-f") != 0) {
@@ -31,11 +32,13 @@ int main(int argc, char *argv[]) {
     }*/
 
     TLISTA listaUsuarios;
-    TCOLA colaSolicitudes;
+    TCOLA colaVenta;
     crearLista(&listaUsuarios);
-    crearCola(&colaSolicitudes);
+    crearCola(&colaVenta);
     
-    cargarUsuarios(&listaUsuarios);
+    cargarUsuarios(&listaUsuarios, argv[2]);
+    //El argv[2] es el nombre del archivo al ejecutar el programa
+
     int tam;
 
     int opcion;
@@ -69,28 +72,29 @@ int main(int argc, char *argv[]) {
             /*Recibe las solicitudes y las almacena en una cola virtual. Las solicitudes se hacen por el correo del 
             usuario, ya que este es unico para cada uno de los usuarios, hace fatla tambien que se compruebe la clave
             del usuario para poder hacer la solicitud*/
-                recibirSolicitudes(listaUsuarios, &colaSolicitudes);
+                solicitudesVenta(listaUsuarios, &colaVenta);
                 break;
 
             case 4:
                 //Devuelve el numero de solicitudes en la cola
-                consultarSolicitudes(colaSolicitudes);
+                numeroSoli(colaVenta);
                 break;
 
             case 5:
                 //Vende entradas a los primeros usuarios almacenados en la cola y quita a estos usuarios dde la cola
-                venderEntradas(&colaSolicitudes);
+                ventaEntradas(&colaVenta);
                 break;
 
             case 6:
             /*Finaliza el programa almacenando los usuarios de la lista en el archivo y borrando la lista y la cola 
             creadas durante la ejecucion del programa*/
-                finalizarPrograma(&listaUsuarios, &colaSolicitudes);
-                break;
+            guardarUsuarios(listaUsuarios, argv[2]); //El argv[2] es el nombre del archivo al ejecutar el programa
+            destruirCola(&colaVenta);
+            destruirLista(&listaUsuarios);
+            break;
 
             default:
                 printf("Opcion no valida.\n");
-
         }
     } while (opcion != 6);
 
@@ -101,7 +105,6 @@ void darDeAlta(TLISTA *lista) {
 
     TIPOELEMENTOLISTA usuarioNuevo;
     char contrasenaTemp[MAX_PASS];
-    unsigned short cifrado;
 
     printf("Introduzca el email: ");
     scanf("%s", usuarioNuevo.correo); getchar();
@@ -134,9 +137,9 @@ void darDeAlta(TLISTA *lista) {
     scanf("%s", contrasenaTemp); getchar();  
 
     printf("Numero de cifrado para la contraseña: ");
-    scanf("%hu", &cifrado); getchar();
+    scanf("%hu", &usuarioNuevo.cifrado); getchar();
 
-    codificarContrasena(contrasenaTemp, &usuarioNuevo.clave1, cifrado); //Crea la contraseña usando la funcion cadena2clave
+    crearContrasena(contrasenaTemp, &usuarioNuevo.clave1, usuarioNuevo.cifrado); //Crea la contraseña usando la funcion cadena2clave
 
     insertarElementoLista(lista, finLista(*lista), usuarioNuevo); //Inserta el usuario en la lista al final de la misma
     printf("Usuario dado de alta.\n");
@@ -179,7 +182,7 @@ void darDeBaja(TLISTA *listausuarios) {
     printf("Error: Usuario no encontrado.\n");
 }
 
-void recibirSolicitudes(TLISTA lista, TCOLA *cola) {
+void solicitudesVenta(TLISTA lista, TCOLA *cola) {
     char email[MAX_EMAIL];
     char contrasena[MAX_EMAIL]; // Usamos el mismo tamaño que el correo para la contraseña
 
@@ -224,7 +227,7 @@ void recibirSolicitudes(TLISTA lista, TCOLA *cola) {
     }
 }
 
-void consultarSolicitudes(TCOLA cola) {
+void numeroSoli(TCOLA cola) {
     /*Funcion que devuelve la cantidad de solicitudes en la cola*/
     int contador = 0;
     TIPOELEMENTOCOLA contadorcola;
@@ -252,10 +255,11 @@ void consultarSolicitudes(TCOLA cola) {
     printf("Actualmente hay %d solicitudes en la cola.\n", contador);
 }
 
-void venderEntradas(TCOLA *cola) {
+void ventaEntradas(TCOLA *cola) {
+    
     int numEntradas;
     printf("Introduzca el numero de entradas a vender: ");
-    scanf("%d", &numEntradas);
+    scanf("%d", &numEntradas); getchar();
 
     if (numEntradas <= 0 || esColaVacia(*cola)) 
     {
@@ -263,61 +267,83 @@ void venderEntradas(TCOLA *cola) {
         return;
     }
 
-    for (int i = 0; i < numEntradas && !esColaVacia(*cola); i++) 
+    for (int i = 0; i < numEntradas; i++) 
     {
+        if (!esColaVacia(*cola)) //Si la cola es vacia sale del for
+        {
+            break;
+        }
+        
         TIPOELEMENTOCOLA elementoCola;
         consultarPrimerElementoCola(*cola, &elementoCola);
+
         printf("Entrada vendida a: %s\n", elementoCola.email);
         suprimirElementoCola(cola);
     }
 }
 
-void finalizarPrograma(TLISTA *lista, TCOLA *cola) { 
-    /*Para finalizar el programa guarda la lista en el archivo y destruye tanto la lista
-    como la cola creadas durante la ejecución del programa.*/
-    guardarUsuarios(*lista);
-    destruirLista(lista);
-    destruirCola(cola);
+// Función para eliminar el retorno de carro de una línea
+void _strip_line(char *linea) {
+    linea[strcspn(linea, "\r\n")] = 0;
 }
 
-void cargarUsuarios(TLISTA *lista) {
-    FILE *file = fopen(FILENAME, "r");
-    if (file == NULL) 
-    {
-        perror("Error al abrir el fichero");
+// Función para cargar usuarios desde un fichero
+void cargarUsuarios(TLISTA *lista, const char *nombreFichero) {
+    FILE *archivo = fopen(nombreFichero, "r");
+    if (!archivo) {
+        printf("Error al abrir el fichero de usuarios.\n");
         return;
     }
 
-    TIPOELEMENTOLISTA usuario;
-    unsigned short cifrado;
-    while (fscanf(file, "%s %s %s %d %hu", usuario.correo, usuario.nombre, usuario.apellidos, &usuario.edad, &cifrado) == 5) 
-    {
-        cadena2clave(&usuario.clave1, usuario.correo, cifrado); // Suponemos que la clave es el correo cifrado
+    char linea[512];
+    while (fgets(linea, sizeof(linea), archivo)) {
+        _strip_line(linea);
+
+        TIPOELEMENTOLISTA usuario;
+        char contrasena[MAX_EMAIL];
+
+        char *token = strtok(linea, ",");
+        if (token != NULL) strcpy(usuario.correo, token);
+        token = strtok(NULL, ",");
+        if (token != NULL) strcpy(usuario.apellidos, token);
+        token = strtok(NULL, ",");
+        if (token != NULL) strcpy(usuario.nombre, token);
+        token = strtok(NULL, ",");
+        if (token != NULL) usuario.edad = atoi(token); //atoi para pasar el ascii leido a un entero
+        token = strtok(NULL, ",");
+        if (token != NULL) strcpy(contrasena, token);
+        token = strtok(NULL, ",");
+        if (token != NULL) usuario.cifrado = (unsigned short)atoi(token); //Unsigned short para que sean tipos compatibles 
+
+        crear(&usuario.clave1, strlen(contrasena), usuario.cifrado);
+        cadena2clave(&usuario.clave1, contrasena, usuario.cifrado);
+
         insertarElementoLista(lista, finLista(*lista), usuario);
     }
 
-    fclose(file);
+    fclose(archivo);
 }
 
-void guardarUsuarios(TLISTA lista) {
-    FILE *file = fopen(FILENAME, "w");
-    if (file == NULL) 
-    {
-        perror("Error al abrir el fichero");
+// Función para guardar usuarios en un fichero
+void guardarUsuarios(TLISTA lista, const char *nombreFichero) {
+    FILE *archivo = fopen(nombreFichero, "w");
+    if (!archivo) {
+        printf("Error al abrir el fichero de usuarios.\n");
         return;
     }
 
-    TPOSICION pos = primeroLista(lista);
     TIPOELEMENTOLISTA usuario;
-    while (pos != finLista(lista)) 
-    {
+    TPOSICION pos = primeroLista(lista);
+    char contrasena[MAX_EMAIL];
+
+    while (pos != finLista(lista)) {
         recuperarElementoLista(lista, pos, &usuario);
-        unsigned short cifrado = longitud(usuario.clave1); // Asumimos que el cifrado es la longitud de la clave
-        fprintf(file, "%s %s %s %d %hu\n", usuario.correo, usuario.nombre, usuario.apellidos, usuario.edad, cifrado);
+        obtenerContrasena(usuario.clave1, contrasena);
+        fprintf(archivo, "%s,%s,%s,%d,%s,%hu\n", usuario.correo, usuario.apellidos, usuario.nombre, usuario.edad, contrasena, usuario.cifrado);
         pos = siguienteLista(lista, pos);
     }
 
-    fclose(file);
+    fclose(archivo);
 }
 
 int emailExiste(TLISTA lista, char *email) {
@@ -334,7 +360,7 @@ int emailExiste(TLISTA lista, char *email) {
     return 0;
 }
 
-void codificarContrasena(char *contrasena, clave *clave1, unsigned short cifrado) {
+void crearContrasena(char *contrasena, clave *clave1, unsigned short cifrado) {
     cadena2clave(clave1, contrasena, cifrado);
 }
 
