@@ -281,5 +281,7 @@ void codificarContrasena(char *contrasena, clave *clave1, unsigned short cifrado
 }
 
 int verificarContrasena(clave clave1, char *contrasena) {
-    return compruebaclave(clave1, 0); // Modo 0: Pide la clave completa
+    int correcto;
+    correcto = compruebaclave(clave1, 0);
+    return correcto; // Modo 0: Pide la clave completa
 }
