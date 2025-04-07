@@ -9,20 +9,20 @@
 #define MAX_EMAIL 255
 #define MAX_PASS 255
 
-// Funciones auxiliares
+//Funciones del menú de opciones
+void darDeAlta(TLISTA *lista);
+void darDeBaja(TLISTA *lista);
+void recibirSolicitudes(TLISTA lista, TCOLA *cola);
+void consultarSolicitudes(TCOLA cola);
+void venderEntradas(TCOLA *cola);
+void finalizarPrograma(TLISTA *lista, TCOLA *cola);
+
+//Funciones auxiliares para el funcionamiento del programa
 void cargarUsuarios(TLISTA *lista);
 void guardarUsuarios(TLISTA lista);
 int emailExiste(TLISTA lista, char *email);
 void codificarContrasena(char *contrasena, clave *clave1, unsigned short cifrado);
 int verificarContrasena(clave clave1, char *contrasena);
-
-// Funciones del menú
-void darAltaUsuario(TLISTA *lista);
-void darBajaUsuario(TLISTA *lista);
-void recibirSolicitudes(TLISTA lista, TCOLA *cola);
-void consultarSolicitudes(TCOLA cola);
-void venderEntradas(TCOLA *cola);
-void finalizarPrograma(TLISTA *lista, TCOLA *cola);
 
 int main(int argc, char *argv[]) {
     /*if (argc != 3 || strcmp(argv[1], "-f") != 0) {
@@ -48,108 +48,133 @@ int main(int argc, char *argv[]) {
         printf("5. Vender entradas\n");
         printf("6. Finalizar programa\n");
         printf("Seleccione una opcion: ");
-        scanf("%d", &opcion);
-        getchar(); // Limpiar buffer
+        scanf("%d", &opcion); getchar(); //Limpiar con getchar() lo que quede guardado en el buffer de entrada
 
         switch (opcion) {
-            case 1: //Dar de aota un usuario
-                darAltaUsuario(&listaUsuarios);
+            case 1: //Dar de alta un usuario
+                darDeAlta(&listaUsuarios);
 
                 tam = longitudLista(listaUsuarios);
                 printf("Hay %d usuarios registrados en la lista.\n", tam);
                 break;
 
             case 2: //Dar de baja un usuario
-                darBajaUsuario(&listaUsuarios);
+                darDeBaja(&listaUsuarios);
 
                 tam = longitudLista(listaUsuarios);
                 printf("Hay %d usuarios registrados en la lista.\n", tam);
                 break;
 
-            case 3:
+            case 3: 
+            /*Recibe las solicitudes y las almacena en una cola virtual. Las solicitudes se hacen por el correo del 
+            usuario, ya que este es unico para cada uno de los usuarios, hace fatla tambien que se compruebe la clave
+            del usuario para poder hacer la solicitud*/
                 recibirSolicitudes(listaUsuarios, &colaSolicitudes);
-
                 break;
+
             case 4:
+                //Devuelve el numero de solicitudes en la cola
                 consultarSolicitudes(colaSolicitudes);
                 break;
+
             case 5:
+                //Vende entradas a los primeros usuarios almacenados en la cola y quita a estos usuarios dde la cola
                 venderEntradas(&colaSolicitudes);
                 break;
+
             case 6:
+            /*Finaliza el programa almacenando los usuarios de la lista en el archivo y borrando la lista y la cola 
+            creadas durante la ejecucion del programa*/
                 finalizarPrograma(&listaUsuarios, &colaSolicitudes);
                 break;
+
             default:
                 printf("Opcion no valida.\n");
+
         }
     } while (opcion != 6);
 
     return 0;
 }
 
-void darAltaUsuario(TLISTA *lista) {
+void darDeAlta(TLISTA *lista) {
+
     TIPOELEMENTOLISTA usuarioNuevo;
-    char contrasenaTemp[MAX_PASS]; // Usamos el mismo tamaño que el correo para la contraseña
+    char contrasenaTemp[MAX_PASS];
     unsigned short cifrado;
 
     printf("Introduzca el email: ");
-    scanf("%s", usuarioNuevo.correo);
+    scanf("%s", usuarioNuevo.correo); getchar();
 
-    if (emailExiste(*lista, usuarioNuevo.correo) == 1) { //Comprobar si el email ya esta asociado a un usuario
+    if (emailExiste(*lista, usuarioNuevo.correo) == 1)
+    { 
+        /*Comprobar si el email ya esta asociado a un usuario, si esta asociado ya a otro usuario da error y no permite 
+        crear el usuario*/
         printf("Error: El email ya está asociado a un usuario.\n");
         return;
     }
 
-    printf("Introduzca el nombre: ");
+
+    printf("Nombre: ");
     scanf("%s", usuarioNuevo.nombre); getchar();
 
-    printf("Introduzca los apellidos: ");
+    printf("Apellidos: ");
     scanf("%[^\n]", usuarioNuevo.apellidos); getchar();
 
-    printf("Introduzca la edad: ");
+    printf("Edad: ");
     scanf("%d", &usuarioNuevo.edad); getchar();
 
-    if (usuarioNuevo.edad < 18) { //Comprobacion mayoria de edad
+    if (usuarioNuevo.edad < 18) { 
+        //Comprobacion mayoria de edad
         printf("Error: Hay que ser mayor de edad para poder registrarse.\n");
         return;
     }
 
-    printf("Introduzca la contraseña: ");
+    printf("Contraseña: ");
     scanf("%s", contrasenaTemp); getchar();  
 
-    printf("Introduzca el numero de cifrado: ");
+    printf("Numero de cifrado para la contraseña: ");
     scanf("%hu", &cifrado); getchar();
 
     codificarContrasena(contrasenaTemp, &usuarioNuevo.clave1, cifrado); //Crea la contraseña usando la funcion cadena2clave
 
     insertarElementoLista(lista, finLista(*lista), usuarioNuevo); //Inserta el usuario en la lista al final de la misma
-    printf("Usuario dado de alta correctamente.\n");
+    printf("Usuario dado de alta.\n");
 }
 
-void darBajaUsuario(TLISTA *lista) {
+void darDeBaja(TLISTA *listausuarios) {
 
     char email[MAX_EMAIL];
     char contrasena[MAX_PASS]; 
 
     printf("Introduzca el email: ");
-    scanf("%s", email);
+    scanf("%s", email); getchar();
 
-    TPOSICION pos = primeroLista(*lista);
+    TPOSICION posicion;
+    posicion = primeroLista(*listausuarios);
     TIPOELEMENTOLISTA usuario;
-    while (pos != finLista(*lista)) {
-        recuperarElementoLista(*lista, pos, &usuario);
-        if (strcmp(usuario.correo, email) == 0) {
-            if (verificarContrasena(usuario.clave1, contrasena)) {
-                suprimirElementoLista(lista, pos);
-                printf("Usuario dado de baja correctamente.\n");
+
+    while (posicion != finLista(*listausuarios)) 
+    { 
+        //Bucle que recorre la lista completa para comprobar si hay un usuario con ese email
+
+        recuperarElementoLista(*listausuarios, posicion, &usuario);
+
+        if (strcmp(usuario.correo, email) == 0) 
+        {
+            if (verificarContrasena(usuario.clave1, contrasena)) 
+            {
+                suprimirElementoLista(listausuarios, posicion);
+                printf("Usuario dado de baja.\n");
                 liberar(&usuario.clave1);
                 return;
-            } else {
+            } else 
+            {
                 printf("Error: Contraseña incorrecta.\n");
                 return;
             }
         }
-        pos = siguienteLista(*lista, pos);
+        posicion = siguienteLista(*listausuarios, posicion);
     }
     printf("Error: Usuario no encontrado.\n");
 }
@@ -158,30 +183,32 @@ void recibirSolicitudes(TLISTA lista, TCOLA *cola) {
     char email[MAX_EMAIL];
     char contrasena[MAX_EMAIL]; // Usamos el mismo tamaño que el correo para la contraseña
 
-    while (1) {
+    while (1) //Porque se debe repetir hasta que se introduzca el 0 por tanto haya un break
+    {
         printf("Introduzca el email para hacer la solicitud: ");
         scanf("%s", email);
 
-        if (strcmp(email, "0") == 0) { //Si recibe 0 entonces se sale del bucle
+        if (strcmp(email, "0") == 0) //Si recibe 0 entonces se sale del bucle
+        { 
             break;
         }
 
-        if (emailExiste(lista, email)==0) { 
+        if (emailExiste(lista, email)==0) 
+        { 
             //Comprueba que el email existe, si no existe se imprime un error y vuelve al bucle
             printf("Error: Usuario no encontrado.\n");
-            continue; 
         }
 
         TPOSICION pos = primeroLista(lista);
         TIPOELEMENTOLISTA usuario;
 
-        while (pos != finLista(lista)) {
-
+        while (pos != finLista(lista)) 
+        {
             recuperarElementoLista(lista, pos, &usuario);
-            if (strcmp(usuario.correo, email) == 0) {
-
-                if (verificarContrasena(usuario.clave1, contrasena)) {
-                    
+            if (strcmp(usuario.correo, email) == 0) 
+            {
+                if (verificarContrasena(usuario.clave1, contrasena)) 
+                {
                     TIPOELEMENTOCOLA elementoCola;
                     strcpy(elementoCola.email, email);
                     anadirElementoCola(cola, elementoCola);
@@ -198,7 +225,31 @@ void recibirSolicitudes(TLISTA lista, TCOLA *cola) {
 }
 
 void consultarSolicitudes(TCOLA cola) {
-    printf("Actualmente hay %d solicitudes en la cola.\n", esColaVacia(cola) ? 0 : longitudLista(cola));
+    /*Funcion que devuelve la cantidad de solicitudes en la cola*/
+    int contador = 0;
+    TIPOELEMENTOCOLA contadorcola;
+    TCOLA colaTemp; //Se crea una cola temporal para no modificar la cola original
+    
+    crearCola(&colaTemp);
+
+    while (esColaVacia(cola) == 0) 
+    {
+        consultarPrimerElementoCola(cola, &contadorcola);
+        suprimirElementoCola(&cola);
+        anadirElementoCola(&colaTemp, contadorcola);
+        contador++;
+    }
+
+    while (esColaVacia(colaTemp) == 0) 
+    {
+        consultarPrimerElementoCola(colaTemp, &contadorcola);
+        suprimirElementoCola(&colaTemp);
+        anadirElementoCola(&cola, contadorcola);
+    }
+
+    destruirCola(&colaTemp);
+
+    printf("Actualmente hay %d solicitudes en la cola.\n", contador);
 }
 
 void venderEntradas(TCOLA *cola) {
@@ -206,12 +257,14 @@ void venderEntradas(TCOLA *cola) {
     printf("Introduzca el numero de entradas a vender: ");
     scanf("%d", &numEntradas);
 
-    if (numEntradas <= 0 || esColaVacia(*cola)) {
+    if (numEntradas <= 0 || esColaVacia(*cola)) 
+    {
         printf("No hay suficientes solicitudes en la cola.\n");
         return;
     }
 
-    for (int i = 0; i < numEntradas && !esColaVacia(*cola); i++) {
+    for (int i = 0; i < numEntradas && !esColaVacia(*cola); i++) 
+    {
         TIPOELEMENTOCOLA elementoCola;
         consultarPrimerElementoCola(*cola, &elementoCola);
         printf("Entrada vendida a: %s\n", elementoCola.email);
@@ -229,14 +282,16 @@ void finalizarPrograma(TLISTA *lista, TCOLA *cola) {
 
 void cargarUsuarios(TLISTA *lista) {
     FILE *file = fopen(FILENAME, "r");
-    if (file == NULL) {
+    if (file == NULL) 
+    {
         perror("Error al abrir el fichero");
         return;
     }
 
     TIPOELEMENTOLISTA usuario;
     unsigned short cifrado;
-    while (fscanf(file, "%s %s %s %d %hu", usuario.correo, usuario.nombre, usuario.apellidos, &usuario.edad, &cifrado) == 5) {
+    while (fscanf(file, "%s %s %s %d %hu", usuario.correo, usuario.nombre, usuario.apellidos, &usuario.edad, &cifrado) == 5) 
+    {
         cadena2clave(&usuario.clave1, usuario.correo, cifrado); // Suponemos que la clave es el correo cifrado
         insertarElementoLista(lista, finLista(*lista), usuario);
     }
@@ -246,14 +301,16 @@ void cargarUsuarios(TLISTA *lista) {
 
 void guardarUsuarios(TLISTA lista) {
     FILE *file = fopen(FILENAME, "w");
-    if (file == NULL) {
+    if (file == NULL) 
+    {
         perror("Error al abrir el fichero");
         return;
     }
 
     TPOSICION pos = primeroLista(lista);
     TIPOELEMENTOLISTA usuario;
-    while (pos != finLista(lista)) {
+    while (pos != finLista(lista)) 
+    {
         recuperarElementoLista(lista, pos, &usuario);
         unsigned short cifrado = longitud(usuario.clave1); // Asumimos que el cifrado es la longitud de la clave
         fprintf(file, "%s %s %s %d %hu\n", usuario.correo, usuario.nombre, usuario.apellidos, usuario.edad, cifrado);
@@ -266,7 +323,8 @@ void guardarUsuarios(TLISTA lista) {
 int emailExiste(TLISTA lista, char *email) {
     TPOSICION pos = primeroLista(lista);
     TIPOELEMENTOLISTA usuario;
-    while (pos != finLista(lista)) {
+    while (pos != finLista(lista)) 
+    {
         recuperarElementoLista(lista, pos, &usuario);
         if (strcmp(usuario.correo, email) == 0) {
             return 1;
@@ -285,3 +343,8 @@ int verificarContrasena(clave clave1, char *contrasena) {
     correcto = compruebaclave(clave1, 0);
     return correcto; // Modo 0: Pide la clave completa
 }
+
+
+
+
+
