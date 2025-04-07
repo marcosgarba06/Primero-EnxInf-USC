@@ -139,8 +139,6 @@ void darBajaUsuario(TLISTA *lista) {
     while (pos != finLista(*lista)) {
         recuperarElementoLista(*lista, pos, &usuario);
         if (strcmp(usuario.correo, email) == 0) {
-            printf("Introduzca la contraseña: ");
-            scanf("%s", contrasena);
             if (verificarContrasena(usuario.clave1, contrasena)) {
                 suprimirElementoLista(lista, pos);
                 printf("Usuario dado de baja correctamente.\n");
@@ -161,29 +159,34 @@ void recibirSolicitudes(TLISTA lista, TCOLA *cola) {
     char contrasena[MAX_EMAIL]; // Usamos el mismo tamaño que el correo para la contraseña
 
     while (1) {
-        printf("Introduzca el email (o '0' para finalizar): ");
+        printf("Introduzca el email para hacer la solicitud: ");
         scanf("%s", email);
-        if (strcmp(email, "0") == 0) {
+
+        if (strcmp(email, "0") == 0) { //Si recibe 0 entonces se sale del bucle
             break;
         }
 
-        if (!emailExiste(lista, email)) {
+        if (emailExiste(lista, email)==0) { 
+            //Comprueba que el email existe, si no existe se imprime un error y vuelve al bucle
             printf("Error: Usuario no encontrado.\n");
-            continue;
+            continue; 
         }
 
         TPOSICION pos = primeroLista(lista);
         TIPOELEMENTOLISTA usuario;
+
         while (pos != finLista(lista)) {
+
             recuperarElementoLista(lista, pos, &usuario);
             if (strcmp(usuario.correo, email) == 0) {
-                printf("Introduzca la contraseña: ");
-                scanf("%s", contrasena);
+
                 if (verificarContrasena(usuario.clave1, contrasena)) {
+                    
                     TIPOELEMENTOCOLA elementoCola;
                     strcpy(elementoCola.email, email);
                     anadirElementoCola(cola, elementoCola);
                     printf("Solicitud añadida a la cola.\n");
+                    
                 } else {
                     printf("Error: Contraseña incorrecta.\n");
                 }
