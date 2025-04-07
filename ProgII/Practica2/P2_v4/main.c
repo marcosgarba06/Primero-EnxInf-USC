@@ -22,7 +22,11 @@ int main(int argc, char const *argv[])
 {
     TLISTA listaUsu; 
     TIPOELEMENTOLISTA nuevoUsu;
+    TCOLA colaVenta;
+
     crearLista(&listaUsu);
+    crearCola(&colaVenta);
+
     char opcion;
 
     int tam = 0;
@@ -41,47 +45,6 @@ int main(int argc, char const *argv[])
         switch(opcion)
         {
         case 'a':
-            
-            unsigned short cifrado;
-            char contrasenaTemp[MAX_PASS];
-            clave clave1;
-            
-            getchar();
-            printf("Introduzca el nombre del usuario: ");
-            scanf("%s", nuevoUsu.nombre); getchar();
-            
-            printf("Introduzca los apellidos del usuario: ");
-            scanf("%[^\n]", nuevoUsu.apellidos); getchar(); 
-            
-            printf("Introduzca el email del usuario: ");
-            scanf("%s", nuevoUsu.correo); getchar();
-            
-            printf("Introduzca la edad del usuario: ");
-            scanf("%d", &nuevoUsu.edad);
-
-            if (nuevoUsu.edad < 18){ //Comprobar que e maior de idade 
-                printf("Error: El usuario debe ser mayor de edad.\n");
-                break;
-            }
-            
-            printf("Introduzca la clave: ");
-            while (getchar() != '\n'); fgets(contrasenaTemp, sizeof(contrasenaTemp), stdin); //Almacena o escrito por teclado para a clave
-            
-            int len = strlen(contrasenaTemp); 
-            if (len > 0 && contrasenaTemp[len-1] == '\n') { //Eliminar o \0 da cadea
-                contrasenaTemp[len-1] = '\0';
-            }
-            
-            printf("Inroduzca el número para cifrar la clave: ");
-            scanf("%hu", &cifrado);
-            
-            cadena2clave(&clave1, contrasenaTemp, cifrado); //crea clave
-            printf("Clave creada con éxito.\n");
-            nuevoUsu.clave1 = clave1; //Pone clave en struct
-            imprimir(nuevoUsu.clave1,0);
-           
-          
-            insertarElementoLista(&listaUsu ,primeroLista(listaUsu), nuevoUsu); //inserta elemento lista
 
             tam = longitudLista(listaUsu);
             printf("Hay %d usuarios registrados. \n", tam);
@@ -95,6 +58,7 @@ int main(int argc, char const *argv[])
             break;
 
         case 's':
+            destruirLista(&listaUsu);
             //escribirArchivoUsuarios(&listaUsu, "listausuarios.txt");
             printf("Saliendo del programa...\n");
             break;
@@ -104,8 +68,56 @@ int main(int argc, char const *argv[])
             break;
         }
     } while (opcion!='s');
-    
     return 0;
+}
+
+void darDeAlta(TLISTA *listaUsu){
+    TIPOELEMENTOLISTA nuevoUsu;
+    unsigned short cifrado;
+    char contrasenaTemp[MAX_PASS];
+    clave clave1;
+                            
+    getchar();
+    printf("Introduzca el nombre del usuario: ");
+    scanf("%s", nuevoUsu.nombre); getchar();
+                            
+    printf("Introduzca los apellidos del usuario: ");
+    scanf("%[^\n]", nuevoUsu.apellidos); getchar(); 
+    
+    printf("Introduzca el email del usuario: ");
+    scanf("%s", nuevoUsu.correo); getchar();
+    if (esListaVacia(*listaUsu) == 0)
+    {
+        
+    }
+    
+    
+    printf("Introduzca la edad del usuario: ");
+    scanf("%d", &nuevoUsu.edad);
+
+
+    if (nuevoUsu.edad < 18){ //Comprobar que e maior de idade 
+        printf("Error: El usuario debe ser mayor de edad.\n");
+        return;
+    }
+    
+    printf("Introduzca la clave: ");
+    while (getchar() != '\n'); fgets(contrasenaTemp, sizeof(contrasenaTemp), stdin); //Almacena o escrito por teclado para a clave
+    
+    int len = strlen(contrasenaTemp); 
+    if (len > 0 && contrasenaTemp[len-1] == '\n') { //Eliminar o \0 da cadea
+        contrasenaTemp[len-1] = '\0';
+    }
+    
+    printf("Inroduzca el número para cifrar la clave: ");
+    scanf("%hu", &cifrado);
+    
+    cadena2clave(&clave1, contrasenaTemp, cifrado); //crea clave
+    printf("Clave creada con éxito.\n");
+    nuevoUsu.clave1 = clave1; //Pone clave en struct
+    imprimir(nuevoUsu.clave1,0);
+
+    insertarElementoLista(&listaUsu ,finLista(listaUsu), nuevoUsu); //inserta elemento lista
 }
 
 void darDeBaja(TLISTA *listaUsu){
@@ -176,3 +188,24 @@ void imprimirTodosLosUsuarios(TLISTA listaUsu) {
     }
 }
 
+void crearColaVenta(TCOLA *colaVenta, TLISTA listaUsu) {
+    
+    char emailTemp[MAX_EMAIL];
+    char contrasenaTemp[MAX_PASS];
+    TIPOELEMENTOLISTA usuario;
+    int usuarioEncontrado = 0;
+
+}
+
+TIPOELEMENTOLISTA* encontrarUsuarioPorEmail(TLISTA listaUsu, const char* email) {
+    TPOSICION pos = primeroLista(listaUsu);
+    while (pos != finLista(listaUsu)) {
+        DatUsuario* usuario;
+        recuperarElementoLista(listaUsu, pos, &usuario);
+        if (strcmp(usuario->correo, email) == 0) {
+            return usuario;
+        }
+        pos = siguienteLista(listaUsu, pos);
+    }
+    return NULL;
+}
