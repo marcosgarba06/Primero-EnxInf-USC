@@ -269,7 +269,7 @@ void ventaEntradas(TCOLA *cola) {
 
     for (int i = 0; i < numEntradas; i++) 
     {
-        if (!esColaVacia(*cola)) //Si la cola es vacia sale del for
+        if (esColaVacia(*cola) == 1) //Si la cola es vacia sale del for
         {
             break;
         }
