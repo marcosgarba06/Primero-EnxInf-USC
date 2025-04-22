@@ -14,9 +14,38 @@ void insertionSort(int array[], int size);
 
 int main(int argc, char const *argv[])
 {
+  if(argc < 5){
+    printf("Error: Se deben introducir los siguientes argumentos: ");
+    printf("\nargv[1]: Tamaño inicial");
+    printf("\nargv[2]: Tamaño final");
+    printf("\nargv[3]: Paso");
+    printf("\nargv[4]: Modo(1 busqueda de pares, 2 quicksort  y 3 insertion sort)");
+  }
+    int tamInicial =  atoi(argv[1]);
+    int tamFinal = atoi(argv[2]);
+    int paso = atoi(argv[3]);
+    int modo = atoi(argv[4]);
 
+    if (tamInicial < 0 || tamFinal <0 || paso < 0|| modo <0)
+    {
+      printf("Error: Todos los parametros deben ser numeros enteros positivos");
+      return -1;
+    }
+    srand(time(NULL)); //Inicia la aleatorizacion con el tiempo
+    
     return 0;
 }
+
+
+void inicializaVectorRand(int *v1, int tam)
+{
+  for (int i = 0; i < tam; i++)
+  {
+    v1[i] = rand() % 101; //Porque el rango de los numeros en el vector es de 0 a 100
+  }
+}
+
+
 
 
 //Implementacion de Quick Sort en C obtenida de la web
