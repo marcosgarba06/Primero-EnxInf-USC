@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 
+
 //Funciones para la implementaccion del quick sort de la web
 void swap(int *a, int *b);
 int partition(int array[], int low, int high);
@@ -9,43 +10,128 @@ void quickSort(int array[], int low, int high);
 void printArray(int array[], int size);
 
 //Funciones para la implementacion del insertion sort de la web
-void printArray(int array[], int size);
+void printArray2(int array[], int size);
 void insertionSort(int array[], int size);
+
+//Funcion inicializar vector
+void inicializaVectorRand(int *v1, int tam);
+
+//Funciones encontrar suma pares
+void encontrarSumaPares(int *v1, int resultado, int tam);
 
 int main(int argc, char const *argv[])
 {
-  if(argc < 5){
+  if(argc < 5)
+  {
     printf("Error: Se deben introducir los siguientes argumentos: ");
     printf("\nargv[1]: Tamaño inicial");
     printf("\nargv[2]: Tamaño final");
     printf("\nargv[3]: Paso");
     printf("\nargv[4]: Modo(1 busqueda de pares, 2 quicksort  y 3 insertion sort)");
+    return -1;
   }
     int tamInicial =  atoi(argv[1]);
     int tamFinal = atoi(argv[2]);
     int paso = atoi(argv[3]);
     int modo = atoi(argv[4]);
 
-    if (tamInicial < 0 || tamFinal <0 || paso < 0|| modo <0)
+    if (tamInicial < 0 || tamFinal <0 || paso < 0)
     {
       printf("Error: Todos los parametros deben ser numeros enteros positivos");
       return -1;
     }
-    srand(time(NULL)); //Inicia la aleatorizacion con el tiempo
-    
+
+    if (modo < 1 || modo > 3)
+    {
+      printf("El modo debe ser 1 (busqueda de pares), 2 (quicksort) o 3 (insertion sort)");
+    }
+
+    for(int i = tamInicial; i <= tamFinal; i+=paso)
+    {
+      int *v = (int *)malloc(i * sizeof(int));
+
+      if (v == NULL)
+      {
+        printf("Error: No se pudo asignar memoria para el vector");
+        return -1;
+      }
+
+      inicializaVectorRand(v, i); //Funcion que inicializa el vector randomizado del tamaño i
+      printf("\nEJECUCION CON TAMAÑO %d\n", i);
+      printf("\n");
+      switch(modo)
+      {
+        case 1:
+          encontrarSumaPares(v,100,i);
+          break;
+        case 2:
+          printf("Vector desoredenado: \n"); //Imprime el vector desordenado
+          printArray(v, i);
+
+          quickSort(v, 0, i-1); //Ordena el vector en orden ascendente con quick sort
+
+          printf("Vector ordenado en orden ascendente: \n"); //Imprime el vector ordenado
+          printArray(v, i);
+
+          break;
+        case 3:
+          printf("Vector desordenado:\n"); //Imprime el vector desordenado
+          printArray2(v, i); 
+
+          insertionSort(v, i); //Ordena el vector con insertion sort
+
+          
+          printf("Vector ordenado en orden ascendente:\n"); //Imprime el vector ordenado de forma ascendente
+          printArray2(v, i);
+
+          break;
+        default:
+          printf("Error: Modo incorrecto\n");
+      }
+
+      free(v);
+    }
     return 0;
 }
 
 
 void inicializaVectorRand(int *v1, int tam)
 {
+  srand(time(NULL));
   for (int i = 0; i < tam; i++)
   {
     v1[i] = rand() % 101; //Porque el rango de los numeros en el vector es de 0 a 100
   }
 }
 
+void encontrarSumaPares(int *v1, int resultado, int tam) //Encuentra 2 numeros pares que sumen un resultado en concreto
+//Complejidad O(n^2) en el peor caso y 
+{
+  if (resultado % 2 != 0)
+  {
+    printf("Error: 2 numeros pares tienen que sumar un numero par\n");
+    return;
+  }
 
+  clock_t inicio = clock(); //Inicia el contador del tiempo de ejecucion
+
+  for (int i = 0; i < tam; i++) //Recorre el vecrtor
+  {
+    if (v1[i] % 2 != 0) //Continua si el numero es impar ya que deben ser pares
+    {
+      continue;
+    }
+    for (int j = i + 1; j < tam; j++) //Recorre el vector desde la posicion siguiente al primero
+    {
+      if (v1[j] % 2 == 0 && v1[i] + v1[j] == resultado) //Solo se hace si es par y la suma es el resultado
+      {
+        printf("Resultados en las posiciones %d y %d del vector\n", i,j); 
+        printf("%d  + %d  = %d \n", v1[i], v1[j], resultado);
+      } 
+    }
+  }
+  double tiempo = (double)(clock() - inicio) / CLOCKS_PER_SEC; //Calcula el tiempo de ejecucion de la funcion
+}
 
 
 //Implementacion de Quick Sort en C obtenida de la web
@@ -130,7 +216,7 @@ int main() {
 //IMPLEMENTACION DE INSERTION SORT DE LA WEB
 
 // Function to print an array
-void printArray(int array[], int size) {
+void printArray2(int array[], int size) {
   for (int i = 0; i < size; i++) {
     printf("%d ", array[i]);
   }
