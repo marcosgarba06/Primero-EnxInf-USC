@@ -59,28 +59,40 @@ int main(int argc, char const *argv[])
       inicializaVectorRand(v, i); //Funcion que inicializa el vector randomizado del tamaño i
       printf("\nEJECUCION CON TAMAÑO %d\n", i);
       printf("\n");
+
+      clock_t inicio, fin;
+
       switch(modo)
       {
         case 1:
-          encontrarSumaPares(v,100,i);
+          inicio = clock(); //Inicia el contador de tiempo de ejecucion
+
+          encontrarSumaPares(v,100,i); //Encuentra las sumas pares que dan 100
+
+          fin = clock(); //finaliza el contador de tiempo
+          printf("%lu ticks\t%lf segundos\n", (fin-inicio), (fin - inicio)/(double)CLOCKS_PER_SEC); //Calcula e imprime el tiempo de ejecucion 
+
           break;
         case 2:
-          printf("Vector desoredenado: \n"); //Imprime el vector desordenado
-          printArray(v, i);
+          inicio = clock(); //Inicia el contador de tiempo de ejecucion
 
           quickSort(v, 0, i-1); //Ordena el vector en orden ascendente con quick sort
+
+          fin = clock(); //finaliza el contador de tiempo
+          printf("%lu ticks\t%lf segundos\n", (fin-inicio), (fin - inicio)/(double)CLOCKS_PER_SEC); //Calcula e imprime el tiempo de ejecucion 
 
           printf("Vector ordenado en orden ascendente: \n"); //Imprime el vector ordenado
           printArray(v, i);
 
           break;
         case 3:
-          printf("Vector desordenado:\n"); //Imprime el vector desordenado
-          printArray2(v, i); 
+          inicio = clock(); //Inicia el contador de tiempo de ejecucion
 
           insertionSort(v, i); //Ordena el vector con insertion sort
 
-          
+          fin = clock(); //finaliza el contador de tiempo
+          printf("%lu ticks\t%lf segundos\n", (fin-inicio), (fin - inicio)/(double)CLOCKS_PER_SEC); //Calcula e imprime el tiempo de ejecucion 
+
           printf("Vector ordenado en orden ascendente:\n"); //Imprime el vector ordenado de forma ascendente
           printArray2(v, i);
 
@@ -113,8 +125,6 @@ void encontrarSumaPares(int *v1, int resultado, int tam) //Encuentra 2 numeros p
     return;
   }
 
-  clock_t inicio = clock(); //Inicia el contador del tiempo de ejecucion
-
   for (int i = 0; i < tam; i++) //Recorre el vecrtor
   {
     if (v1[i] % 2 != 0) //Continua si el numero es impar ya que deben ser pares
@@ -130,7 +140,6 @@ void encontrarSumaPares(int *v1, int resultado, int tam) //Encuentra 2 numeros p
       } 
     }
   }
-  double tiempo = (double)(clock() - inicio) / CLOCKS_PER_SEC; //Calcula el tiempo de ejecucion de la funcion
 }
 
 
