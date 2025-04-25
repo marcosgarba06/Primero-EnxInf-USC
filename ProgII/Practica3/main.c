@@ -30,39 +30,40 @@ int main(int argc, char const *argv[])
     printf("\nargv[4]: Modo(1 busqueda de pares, 2 quicksort  y 3 insertion sort)");
     return -1;
   }
+    //Asigna a las variables los argumentos de linea de comandos
     int tamInicial =  atoi(argv[1]);
     int tamFinal = atoi(argv[2]);
     int paso = atoi(argv[3]);
     int modo = atoi(argv[4]);
 
-    if (tamInicial < 0 || tamFinal <0 || paso < 0)
+    if (tamInicial < 0 || tamFinal <0 || paso < 0) //Comprueba argumentos validos
     {
       printf("Error: Todos los parametros deben ser numeros enteros positivos");
       return -1;
     }
 
-    if (modo < 1 || modo > 3)
+    if (modo < 1 || modo > 3) //Comprueba modo valido (entre 1 y 3)
     {
       printf("El modo debe ser 1 (busqueda de pares), 2 (quicksort) o 3 (insertion sort)");
     }
 
-    for(int i = tamInicial; i <= tamFinal; i+=paso)
+    for(int i = tamInicial; i <= tamFinal; i+=paso) //Bucle que va ejecutando el programa para cada tamaño
     {
-      int *v = (int *)malloc(i * sizeof(int));
+      int *v = (int *)malloc(i * sizeof(int)); //Asigna memoria para el vector de tamaño i
 
-      if (v == NULL)
+      if (v == NULL) //Comprueba que se ha podido asignar memoria para el vector 
       {
         printf("Error: No se pudo asignar memoria para el vector");
         return -1;
       }
 
       inicializaVectorRand(v, i); //Funcion que inicializa el vector randomizado del tamaño i
-      printf("\nEJECUCION CON TAMAÑO %d\n", i);
+      printf("\nEJECUCION CON TAMAÑO %d\n", i); //Imprime el tamaño del vector de la ejecucion actual
       printf("\n");
 
-      clock_t inicio, fin;
+      clock_t inicio, fin; //Variables de tipo clock_t para medir el tiempo
 
-      switch(modo)
+      switch(modo) //Se elige segun el modo que funcion se ejecuta
       {
         case 1:
           inicio = clock(); //Inicia el contador de tiempo de ejecucion
@@ -101,7 +102,7 @@ int main(int argc, char const *argv[])
           printf("Error: Modo incorrecto\n");
       }
 
-      free(v);
+      free(v); //Libera la memoria del vector
     }
     return 0;
 }
