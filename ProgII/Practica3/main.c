@@ -13,8 +13,11 @@ void printArray(int array[], int size);
 void printArray2(int array[], int size);
 void insertionSort(int array[], int size);
 
+//Funcion para escribir en los archivos correspondientes
+void escribirtTiempoArchivos(int tamanho, double tiempo, char *nombreArchivo);
+
 //Funcion inicializar vector
-void inicializaVectorRand(int *v1, int tam);
+void inicializaVectorRand(int *v1, int tam, int max);
 
 //Funciones encontrar suma pares
 void encontrarSumaPares(int *v1, int resultado, int tam);
@@ -35,6 +38,8 @@ int main(int argc, char const *argv[])
     int tamFinal = atoi(argv[2]);
     int paso = atoi(argv[3]);
     int modo = atoi(argv[4]);
+    int max;
+    char *nombreArchivo;
 
     if (tamInicial < 0 || tamFinal <0 || paso < 0) //Comprueba argumentos validos
     {
@@ -47,6 +52,20 @@ int main(int argc, char const *argv[])
       printf("El modo debe ser 1 (busqueda de pares), 2 (quicksort) o 3 (insertion sort)");
     }
 
+    if (modo == 1) //Decide valor de max y nombre del archivo segun el modo en el que se ejecuta el programa
+    { 
+      nombreArchivo = "tiempoEncontrarSumaPares.txt";
+      max = 100;
+    }else if (modo == 2 )
+    { 
+      nombreArchivo = "tiempoQuicksort.txt";
+      max = 10000;
+    }else if (modo == 3 )
+    { 
+      nombreArchivo = "tiempoInsertionSort.txt";
+      max = 10000;
+    }
+
     for(int i = tamInicial; i <= tamFinal; i+=paso) //Bucle que va ejecutando el programa para cada tamaño
     {
       int *v = (int *)malloc(i * sizeof(int)); //Asigna memoria para el vector de tamaño i
@@ -57,11 +76,13 @@ int main(int argc, char const *argv[])
         return -1;
       }
 
-      inicializaVectorRand(v, i); //Funcion que inicializa el vector randomizado del tamaño i
+      inicializaVectorRand(v, i, max); //Funcion que inicializa el vector randomizado del tamaño i
+
       printf("\nEJECUCION CON TAMAÑO %d\n", i); //Imprime el tamaño del vector de la ejecucion actual
       printf("\n");
 
       clock_t inicio, fin; //Variables de tipo clock_t para medir el tiempo
+      double time; //Variable para almacenar el tiempo de ejecucion
 
       switch(modo) //Se elige segun el modo que funcion se ejecuta
       {
@@ -71,7 +92,11 @@ int main(int argc, char const *argv[])
           encontrarSumaPares(v,100,i); //Encuentra las sumas pares que dan 100
 
           fin = clock(); //finaliza el contador de tiempo
-          printf("%lu ticks\t%lf segundos\n", (fin-inicio), (fin - inicio)/(double)CLOCKS_PER_SEC); //Calcula e imprime el tiempo de ejecucion 
+
+          time = (fin - inicio)/(double)CLOCKS_PER_SEC; //Calcula tiempo de ejecucion
+          printf("%lu ticks\t%lf segundos\n", (fin-inicio), time); //Imprime el tiempo de ejecucion 
+          
+          escribirtTiempoArchivos(i, time, nombreArchivo); //Funcion para escribir el valor del tiempo en el archivo correspondiente
 
           break;
         case 2:
@@ -80,7 +105,11 @@ int main(int argc, char const *argv[])
           quickSort(v, 0, i-1); //Ordena el vector en orden ascendente con quick sort
 
           fin = clock(); //finaliza el contador de tiempo
-          printf("%lu ticks\t%lf segundos\n", (fin-inicio), (fin - inicio)/(double)CLOCKS_PER_SEC); //Calcula e imprime el tiempo de ejecucion 
+
+          time = (fin - inicio)/(double)CLOCKS_PER_SEC; 
+          printf("%lu ticks\t%lf segundos\n", (fin-inicio), time); 
+          
+          escribirtTiempoArchivos(i, time, nombreArchivo); 
 
           printf("Vector ordenado en orden ascendente: \n"); //Imprime el vector ordenado
           printArray(v, i);
@@ -92,7 +121,11 @@ int main(int argc, char const *argv[])
           insertionSort(v, i); //Ordena el vector con insertion sort
 
           fin = clock(); //finaliza el contador de tiempo
-          printf("%lu ticks\t%lf segundos\n", (fin-inicio), (fin - inicio)/(double)CLOCKS_PER_SEC); //Calcula e imprime el tiempo de ejecucion 
+
+          time = (fin - inicio)/(double)CLOCKS_PER_SEC;
+          printf("%lu ticks\t%lf segundos\n", (fin-inicio), time); 
+          
+          escribirtTiempoArchivos(i, time, nombreArchivo); 
 
           printf("Vector ordenado en orden ascendente:\n"); //Imprime el vector ordenado de forma ascendente
           printArray2(v, i);
@@ -107,13 +140,22 @@ int main(int argc, char const *argv[])
     return 0;
 }
 
+void escribirtTiempoArchivos(int tamanho, double tiempo, char *nombreArchivo){
+  FILE *archivo = fopen(nombreArchivo, "a"); //Abre el archivo en modo de añadir al final (si no existe se crea)
+  if (archivo == NULL)
+  {
+    printf("Error: No se pudo abrir el archivo\n");
+  }
+  fprintf(archivo, "%d\t %lf\n", tamanho, tiempo); //Escribe en el archivo el tamaño del vector y el tiempo de ejecucion
+  fclose(archivo); 
+}
 
-void inicializaVectorRand(int *v1, int tam)
+void inicializaVectorRand(int *v1, int tam, int max)
 {
   srand(time(NULL));
   for (int i = 0; i < tam; i++)
   {
-    v1[i] = rand() % 101; //Porque el rango de los numeros en el vector es de 0 a 100
+    v1[i] = rand() % max + 1; //Porque el rango de los numeros en el vector es de 0 a hasta max
   }
 }
 
