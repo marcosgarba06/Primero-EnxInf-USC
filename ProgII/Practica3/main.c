@@ -81,8 +81,8 @@ int main(int argc, char const *argv[])
       printf("\nEJECUCION CON TAMAÑO %d\n", i); //Imprime el tamaño del vector de la ejecucion actual
       printf("\n");
 
-      clock_t inicio, fin; //Variables de tipo clock_t para medir el tiempo
-      double time; //Variable para almacenar el tiempo de ejecucion
+      clock_t inicio = -1, fin = -1; //Variables de tipo clock_t para medir el tiempo
+      double time = 0; //Variable para almacenar el tiempo de ejecucion
 
       switch(modo) //Se elige segun el modo que funcion se ejecuta
       {
@@ -111,8 +111,8 @@ int main(int argc, char const *argv[])
           
           escribirtTiempoArchivos(i, time, nombreArchivo); 
 
-          printf("Vector ordenado en orden ascendente: \n"); //Imprime el vector ordenado
-          printArray(v, i);
+          //printf("Vector ordenado en orden ascendente: \n"); //Imprime el vector ordenado
+          //printArray(v, i);
 
           break;
         case 3:
@@ -127,8 +127,8 @@ int main(int argc, char const *argv[])
           
           escribirtTiempoArchivos(i, time, nombreArchivo); 
 
-          printf("Vector ordenado en orden ascendente:\n"); //Imprime el vector ordenado de forma ascendente
-          printArray2(v, i);
+          //printf("Vector ordenado en orden ascendente:\n"); //Imprime el vector ordenado de forma ascendente
+          //printArray2(v, i);
 
           break;
         default:
@@ -160,25 +160,15 @@ void inicializaVectorRand(int *v1, int tam, int max)
 }
 
 void encontrarSumaPares(int *v1, int resultado, int tam) //Encuentra 2 numeros pares que sumen un resultado en concreto
-//Complejidad O(n^2) en el peor caso y 
+//Complejidad O(n^2) en el peor caso 
 {
-  if (resultado % 2 != 0)
-  {
-    printf("Error: 2 numeros pares tienen que sumar un numero par\n");
-    return;
-  }
-
   for (int i = 0; i < tam; i++) //Recorre el vecrtor
   {
-    if (v1[i] % 2 != 0) //Continua si el numero es impar ya que deben ser pares
-    {
-      continue;
-    }
     for (int j = i + 1; j < tam; j++) //Recorre el vector desde la posicion siguiente al primero
     {
-      if (v1[j] % 2 == 0 && v1[i] + v1[j] == resultado) //Solo se hace si es par y la suma es el resultado
+      if (v1[i] + v1[j] == resultado)
       {
-        printf("Resultados en las posiciones %d y %d del vector\n", i,j); 
+        //printf("Resultados en las posiciones %d y %d del vector\n", i,j); 
         printf("%d  + %d  = %d \n", v1[i], v1[j], resultado);
       } 
     }
