@@ -8,6 +8,7 @@ mostra=c("b","b","r","mb","m","b","b","r","mm",
 class(mostra)
 
 mostraf = factor(mostra,levels=c("mm", "m", "r", "b", "mb"))
+#factor cinvuerte vector de caracteres en un factoor de R
 
 mostra
 mostraf
@@ -160,4 +161,9 @@ sort(mtcars$hp) #335 e o atipico
 
 plot(mtcars$hp, mtcars$mpg, pch=16)
 
-
+#Ejemplo tabla cuantitativas continuas 
+clases = cut(datos, breaks = 4, right = F)
+ni = table(clases)
+fi = prop.table(clases)
+Ni = cumsum(fi)
+Fi = cumsum(fi)

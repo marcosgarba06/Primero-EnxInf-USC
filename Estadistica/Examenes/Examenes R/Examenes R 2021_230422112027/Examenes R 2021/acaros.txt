@@ -1,0 +1,16 @@
+Tejido  Humedad  Recuento
+Algodon  50  25
+Algodon  60  27
+Algodon  70  31
+Algodon  80  36
+Algodon  90  40
+Lana  50  33
+Lana  60  40
+Lana  70  51
+Lana  80  60
+Lana  90  64
+Sintetico  50  29
+Sintetico  60  33
+Sintetico  70  42
+Sintetico  80  49
+Sintetico  90  53
