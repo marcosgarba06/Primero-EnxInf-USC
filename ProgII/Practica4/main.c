@@ -194,7 +194,6 @@ void swap(Procesos *a, Procesos *b) { //Se cambia el tipo elemento de int a stru
 
   //function to print array elements
   void printArray(Procesos array[], int size) { //Cambia de int a Procesos
-    int i;
     for (int i = 0; i < size; ++i) {
       printf("Proceso: %s  Tiempo: %d  \n", array[i].id, array[i].tiempo); //Se imprimen los 2 elementos del struct
     }
