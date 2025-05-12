@@ -28,7 +28,7 @@ int main(int argc, char const *argv[])
     FILE *archivo = fopen(argv[1], "r");
 
     if (!archivo) {
-        perror("Error al abrir el archivo");
+        printf("Error al abrir el archivo");
         return 1;
     }
 
@@ -39,7 +39,7 @@ int main(int argc, char const *argv[])
     vectorprocesos = (Procesos*)malloc(numeroProcesos * sizeof(Procesos)); 
     //Asignacion de memoria para el vector de procesos
     if (vectorprocesos == NULL) {
-        perror("Error al asignar memoria");
+        printf("Error al asignar memoria");
         fclose(archivo);
         return 1;
     }
