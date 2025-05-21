@@ -34,8 +34,9 @@ void Push (TPILA *p, TELEMENTO e)
     int resp = EsLlena(*p);
     if (resp == 1) printf("ERROR, la pila está llena\n");
     else {
-        (*p)->cima++;
+        (*p)->cima++; //se amplia el puntero que indica la cima
         (*p)->arrayelementos[(*p)->cima] = e ; 
+        //se añade el nuevo elemento en la posicion que se deja libre al mover el puntero a cima
     }
 }
 

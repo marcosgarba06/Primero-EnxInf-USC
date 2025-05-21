@@ -24,11 +24,11 @@ int EsVacia (TPILA p )
 
 void Push(TPILA *p , TELEMENTO e)
 {
-    TPILA q;
-    q= (TPILA) malloc (sizeof(TNodo));
-    q->dato = e ;
-    q->sig = *p ;
-    *p = q;
+    TPILA q; //se declara el nuevo nodo
+    q= (TPILA) malloc (sizeof(TNodo)); //se reserva espacio para un nuevo nodo
+    q->dato = e ; //se asigna al nuevo nodo el elemento
+    q->sig = *p ; //el nuevo nodo apunta al nodo que estaba en la cima
+    *p = q; //ahora el puntero pila apunta al nuevo nodo
 }
 
 void Cima (TPILA p, TELEMENTO * pe)
@@ -36,21 +36,21 @@ void Cima (TPILA p, TELEMENTO * pe)
     int respuesta = EsVacia(p);
     if (respuesta == 1)
     printf ("ERROR, la pila no tiene elementos\n");
-    else *pe = p->dato;
+    else *pe = p->dato; //el dato al que apunta p se almacena en pe
 }
 
 void Pop(TPILA * p)
 {
-    TPILA q;
+    TPILA q; //puntero a un TNODO auxiliar 
     int respuesta;
     respuesta = EsVacia(*p);
     if (respuesta==1)
     printf("ERROR, ....\n");
     else
     {
-        q = *p;
-        *p = (*p)->sig;
-        free(q);
+        q = *p; //se almaceena una copia del puntero p en q
+        *p = (*p)->sig; //hacemos que p apunte al siguiente nodo
+        free(q); //liberamos q
     }
 }
 

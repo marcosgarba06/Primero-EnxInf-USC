@@ -10,8 +10,8 @@ typedef STCOLA * TCOLA;
 
 int Siguiente ( int pos )
 {
-    if (pos < MAX - 1) return (pos+1);
-    else return 0;
+    if (pos < MAX - 1) return (pos+1); //Si la posicion no es la ultima se incrementa el valor de la posicion
+    else return 0; //Si se llega a la ultima posicion, se vuelve a la primera
 }
 
 int EsColaLlena ( TCOLA q )
@@ -23,12 +23,12 @@ int EsColaLlena ( TCOLA q )
 void ColaVacia (TCOLA * q)
 {
     *q = (TCOLA) malloc (sizeof (STCOLA) );
-    (*q)->final = MAX - 1; (*q)->principio = MAX - 1;
+    (*q)->final = MAX - 1; (*q)->principio = MAX - 1; //final == principio == ulima posicion
 }
 
 int EsColaVacia ( TCOLA q )
 {
-    if (q->final == q->principio) return 1;
+    if (q->final == q->principio) return 1; //si final == principio, la cola está vacía
     else return 0;
 }
 
@@ -61,8 +61,9 @@ void AnadirCola ( TCOLA * q , TELEMENTO e)
     if (resp == 1) printf("ERROR, la cola esta llena");
     else
     {
-        pos_sig = Siguiente ((*q)->final);
-        (*q)->final = pos_sig;
+        pos_sig = Siguiente ((*q)->final); //se crea un nuevo indice para el final
+        (*q)->final = pos_sig; //se mueve el puntero de fin de array
         (*q)->arrayelementos [(*q)->final] = e;
+        //se añade el nuevo elemento en la posicion que se deja libre al mover el puntero a final
     }
 }
